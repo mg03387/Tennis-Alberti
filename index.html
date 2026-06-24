@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="it">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tennis Alberti</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:#1a1a18;background:#f5f3ed;}
+.app{max-width:720px;margin:0 auto;padding:.75rem;}
+.screen{display:none;}.screen.active{display:block;}
+.card{background:#fff;border:.5px solid #e0ddd4;border-radius:10px;padding:1.1rem;margin-bottom:.9rem;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;border:.5px solid #c8c4b8;background:transparent;color:#1a1a18;font-size:13px;cursor:pointer;font-family:inherit;transition:background .12s;}
+.btn:hover{background:#f5f3ed;}
+.btn-p{background:#1D9E75;border-color:#1D9E75;color:#fff!important;}.btn-p:hover{background:#0F6E56;}
+.btn-d{border-color:#e74c3c;color:#c0392b;}.btn-d:hover{background:#fdf0ef;}
+.btn-pu{background:#534AB7;border-color:#534AB7;color:#fff!important;}.btn-pu:hover{background:#3d3690;}
+.btn-sm{padding:4px 9px;font-size:12px;}.btn-ic{padding:5px 7px;}
+.ig{margin-bottom:10px;}
+.ig label{display:block;font-size:12px;color:#555;margin-bottom:3px;}
+input,select,textarea{width:100%;padding:7px 10px;border-radius:7px;border:.5px solid #c8c4b8;background:#fff;color:#1a1a18;font-size:13px;font-family:inherit;}
+textarea{resize:vertical;min-height:64px;}
+input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E75;}
+.badge{display:inline-block;padding:2px 7px;border-radius:6px;font-size:11px;font-weight:500;}
+.bg{background:#E1F5EE;color:#085041;}.br{background:#FCEBEB;color:#501313;}.bk{background:#F1EFE8;color:#2C2C2A;}.bb{background:#E6F1FB;color:#042C53;}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;padding-bottom:.9rem;border-bottom:.5px solid #e0ddd4;}
+.nav{display:flex;gap:3px;background:#f5f3ed;border-radius:8px;padding:3px;margin-bottom:1.25rem;flex-wrap:wrap;}
+.nb{flex:1;min-width:48px;padding:6px 3px;border:none;background:transparent;color:#666;font-size:11px;border-radius:5px;cursor:pointer;font-family:inherit;transition:all .12s;white-space:nowrap;text-align:center;}
+.nb.active{background:#fff;color:#1a1a18;font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.tc{display:none;}.tc.active{display:block;}
+.row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:.5px solid #e0ddd4;gap:8px;}
+.row:last-child{border-bottom:none;}
+.stitle{font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.empty{text-align:center;padding:1.5rem;color:#aaa;font-size:13px;}
+.ebox{font-size:13px;color:#c0392b;padding:7px 11px;background:#fdf0ef;border-radius:7px;margin:6px 0;}
+.obox{font-size:13px;color:#085041;padding:7px 11px;background:#E1F5EE;border-radius:7px;margin:6px 0;}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.9rem;}
+.sc{background:#f5f3ed;border-radius:8px;padding:10px;text-align:center;}
+.sn{font-size:22px;font-weight:600;}.sl{font-size:11px;color:#666;margin-top:2px;}
+.wn{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.wl{font-size:13px;font-weight:500;}
+.wgw{overflow-x:auto;}
+.wg{display:grid;grid-template-columns:34px repeat(7,1fr);min-width:390px;}
+.wgh{font-size:10px;font-weight:500;color:#666;text-align:center;padding:3px 1px;border-bottom:.5px solid #e0ddd4;}
+.wgh.tdc{color:#0F6E56;font-weight:600;}
+.wghr{font-size:9px;color:#aaa;text-align:right;padding-right:5px;display:flex;align-items:center;justify-content:flex-end;border-right:.5px solid #e0ddd4;}
+.wgc{border-bottom:.5px solid #e0ddd4;border-left:.5px solid #e0ddd4;min-height:24px;cursor:pointer;transition:background .1s;position:relative;}
+.wgc:hover{background:#f5f3ed;}
+.wgc.past{opacity:.4;cursor:default;pointer-events:none;}
+.wgc.occ{background:#F0997B;}.wgc.occ:hover{background:#e8845e;}
+.wgc.mine{background:#9FE1CB;}
+.wgc.sel{background:#1D9E75;}
+.wgc.tdc{background:rgba(29,158,117,.08);}
+.wgc.fl{opacity:.25;cursor:not-allowed;pointer-events:none;}
+.wgc.afree:hover{background:#EDE5FF;}
+.cl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;overflow:hidden;padding:0 2px;text-align:center;line-height:1.1;pointer-events:none;}
+.cl.w{color:#fff;}.cl.d{color:#085041;}.cl.o{color:#7a3010;}
+.leg{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:#888;}
+.ldot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:3px;vertical-align:middle;}
+.cp{background:#f5f3ed;border-radius:8px;padding:10px;margin-top:10px;}
+.mb{padding:9px 11px;border-radius:8px;margin-bottom:7px;background:#f5f3ed;border:.5px solid #e0ddd4;}
+.mb.adm{border-left:3px solid #534AB7;}.mb.usr{border-left:3px solid #1D9E75;}
+.mm{font-size:10px;color:#aaa;margin-top:4px;}
+.udot{display:inline-block;width:6px;height:6px;background:#e74c3c;border-radius:50%;margin-left:3px;vertical-align:middle;}
+.cg{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:10px 0;border-bottom:.5px solid #e0ddd4;}
+.cg:last-child{border-bottom:none;}
+.psel{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.ptag{padding:4px 10px;border-radius:6px;border:.5px solid #c8c4b8;font-size:12px;cursor:pointer;background:transparent;font-family:inherit;color:#666;transition:all .12s;}
+.ptag.active{background:#1D9E75;border-color:#1D9E75;color:#fff;}
+.pex{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px;}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;}
+.modal{background:#fff;border-radius:12px;padding:1.25rem;width:320px;max-width:100%;box-shadow:0 8px 32px rgba(0,0,0,.2);}
+.modal h3{font-size:15px;font-weight:600;margin-bottom:4px;}
+.modal p{font-size:12px;color:#888;margin-bottom:12px;}
+.note{font-size:11px;color:#888;margin-top:6px;display:flex;align-items:center;gap:5px;}
+.week-quota{background:#E1F5EE;border-radius:7px;padding:7px 11px;font-size:12px;color:#085041;margin-bottom:8px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="screen active" id="s-login">
+  <div style="text-align:center;padding:1.5rem 0 1rem;">
+    <div style="width:52px;height:52px;background:#1D9E75;border-radius:13px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+    </div>
+    <div style="font-size:21px;font-weight:600;margin-bottom:3px;">Tennis Alberti</div>
+    <div style="font-size:13px;color:#888;">Sistema di prenotazione condominiale</div>
+  </div>
+  <div class="card">
+    <div class="ig"><label>Username</label><input id="lu" placeholder="es. rossi"/></div>
+    <div class="ig"><label>Password</label><input id="lp" type="password" placeholder="••••••"/></div>
+    <div id="le"></div>
+    <button class="btn btn-p" style="width:100%;justify-content:center;" onclick="doLogin()">Accedi</button>
+    <div style="text-align:center;margin-top:10px;font-size:12px;color:#aaa;">Per registrarti contatta l'amministratore.</div>
+  </div>
+</div>
+
+<div class="screen" id="s-app">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="width:30px;height:30px;background:#1D9E75;border-radius:7px;display:flex;align-items:center;justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+      </div>
+      <div><div style="font-size:14px;font-weight:600;">Tennis Alberti</div><div id="wname" style="font-size:11px;color:#888;"></div></div>
+    </div>
+    <button class="btn btn-sm" onclick="doLogout()">Esci</button>
+  </div>
+  <div class="nav">
+    <button class="nb active" onclick="sTab('prenota',event)">📅 Prenota</button>
+    <button class="nb" onclick="sTab('mie',event)">✅ Le mie</button>
+    <button class="nb" onclick="sTab('storico',event)">📋 Storico</button>
+    <button class="nb" onclick="sTab('stats',event)">📊 Statistiche</button>
+    <button class="nb" onclick="sTab('bacheca',event)">💬 Bacheca<span id="udot" style="display:none;" class="udot"></span></button>
+  </div>
+  <div class="tc active" id="t-prenota">
+    <div class="card">
+      <div class="wn">
+        <button class="btn btn-sm btn-ic" onclick="shiftW(-1)">◀</button>
+        <div class="wl" id="wlabel"></div>
+        <button class="btn btn-sm btn-ic" onclick="shiftW(1)">▶</button>
+      </div>
+      <div id="week-quota-bar" class="week-quota" style="display:none;"></div>
+      <div class="wgw"><div class="wg" id="wgrid"></div></div>
+      <div class="leg">
+        <span><span class="ldot" style="background:#1D9E75;"></span>Selezionato</span>
+        <span><span class="ldot" style="background:#9FE1CB;"></span>Tuo</span>
+        <span><span class="ldot" style="background:#F0997B;"></span>Occupato</span>
+      </div>
+      <div id="berr" style="margin-top:7px;"></div><div id="bok" style="margin-top:7px;"></div>
+      <div id="cpanel" style="display:none;" class="cp">
+        <div style="font-size:12px;color:#888;margin-bottom:6px;">Stai per prenotare:</div>
+        <div id="clist" style="font-size:13px;margin-bottom:8px;"></div>
+        <div style="display:flex;gap:7px;">
+          <button class="btn btn-p btn-sm" onclick="confirmBook()">✓ Conferma</button>
+          <button class="btn btn-sm" onclick="clearSel()">✕ Annulla</button>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#aaa;padding:0 3px;" id="rule-hint"></div>
+  </div>
+  <div class="tc" id="t-mie"><div class="card"><div class="stitle">Prenotazioni attive</div><div id="myblist"></div></div></div>
+  <div class="tc" id="t-storico"><div class="card"><div class="stitle">Storico completo</div><div id="histlist"></div></div></div>
+  <div class="tc" id="t-stats"><div id="ustats"></div></div>
+  <div class="tc" id="t-bacheca">
+    <div class="card">
+      <div class="stitle">Scrivi nella bacheca</div>
+      <div class="ig"><textarea id="umtxt" placeholder="Lascia un messaggio per tutti..."></textarea></div>
+      <button class="btn btn-p btn-sm" onclick="postMsg()">Pubblica</button>
+      <div id="umerr" style="margin-top:5px;"></div>
+    </div>
+    <div class="card"><div class="stitle">Bacheca</div><div id="blist"></div></div>
+  </div>
+</div>
+
+<div class="screen" id="s-admin">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="width:30px;height:30px;background:#534AB7;border-radius:7px;display:flex;align-items:center;justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div style="font-size:14px;font-weight:600;">Pannello Admin</div>
+    </div>
+    <button class="btn btn-sm" onclick="doLogout()">Esci</button>
+  </div>
+  <div class="nav">
+    <button class="nb active" onclick="sAdmTab('ausers',event)">👥 Utenti</button>
+    <button class="nb" onclick="sAdmTab('acal',event)">📅 Calendario</button>
+    <button class="nb" onclick="sAdmTab('astats',event)">📊 Statistiche</button>
+    <button class="nb" onclick="sAdmTab('amsg',event)">💬 Messaggi</button>
+    <button class="nb" onclick="sAdmTab('aset',event)">⚙️ Vincoli</button>
+  </div>
+
+  <div class="tc active" id="t-ausers">
+    <div class="card">
+      <div class="stitle">Registra nuovo utente</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div class="ig" style="margin-bottom:0;"><label>Username</label><input id="new-un" placeholder="es. rossi"/></div>
+        <div class="ig" style="margin-bottom:0;"><label>Password</label><input id="new-up" type="text" placeholder="Password"/></div>
+      </div>
+      <div class="ig"><label>Nome visualizzato</label><input id="new-ud" placeholder="es. Marco Rossi"/></div>
+      <button class="btn btn-p btn-sm" onclick="adminCreateUser()">+ Crea utente</button>
+      <div id="num" style="margin-top:6px;"></div>
+    </div>
+    <div class="card"><div class="stitle">Utenti registrati</div><div id="ulist"></div></div>
+  </div>
+
+  <div class="tc" id="t-acal">
+    <div class="card">
+      <div class="wn">
+        <button class="btn btn-sm btn-ic" onclick="shiftAW(-1)">◀</button>
+        <div class="wl" id="awlabel"></div>
+        <button class="btn btn-sm btn-ic" onclick="shiftAW(1)">▶</button>
+      </div>
+      <div class="wgw"><div class="wg" id="awgrid"></div></div>
+      <div id="acal-msg" style="margin-top:8px;"></div>
+      <div class="leg" style="margin-top:8px;">
+        <span><span class="ldot" style="background:#F0997B;"></span>Prenotato — clicca per cancellare</span>
+        <span><span class="ldot" style="background:#EDE5FF;border:1px solid #9F7AEA;"></span>Libero — clicca per allocare</span>
+      </div>
+      <div class="note">ℹ️ Le allocazioni admin bypassano i vincoli di prenotazione.</div>
+    </div>
+  </div>
+
+  <div class="tc" id="t-astats">
+    <div class="card">
+      <div class="stitle">Periodo di analisi</div>
+      <div class="psel" id="apsel">
+        <button class="ptag active" data-p="ytd" onclick="setAP(this)">YTD</button>
+        <button class="ptag" data-p="30d" onclick="setAP(this)">Ultimi 30gg</button>
+        <button class="ptag" data-p="7d" onclick="setAP(this)">Ultimi 7gg</button>
+        <button class="ptag" data-p="week" onclick="setAP(this)">Settimana</button>
+        <button class="ptag" data-p="month" onclick="setAP(this)">Mese</button>
+        <button class="ptag" data-p="year" onclick="setAP(this)">Anno</button>
+        <button class="ptag" data-p="custom" onclick="setAP(this)">Personalizzato</button>
+      </div>
+      <div id="pex" class="pex" style="display:none;"></div>
+      <div class="ig" style="margin-bottom:8px;"><label>Utente</label>
+        <select id="astat-user" onchange="renderAStats()"><option value="all">Tutti</option></select>
+      </div>
+      <div id="astats-content"></div>
+    </div>
+  </div>
+
+  <div class="tc" id="t-amsg">
+    <div class="card">
+      <div class="stitle">Invia messaggio</div>
+      <div class="ig"><label>Destinatari</label>
+        <select id="msg-to" multiple style="height:100px;"><option value="all" selected>📢 Tutti</option></select>
+        <div style="font-size:11px;color:#aaa;margin-top:3px;">Ctrl/Cmd per più utenti.</div>
+      </div>
+      <div class="ig"><label>Messaggio</label><textarea id="mtxt" placeholder="Scrivi..."></textarea></div>
+      <button class="btn btn-p btn-sm" onclick="sendAdmMsg()">Invia</button>
+      <div id="mok" style="margin-top:5px;"></div>
+    </div>
+    <div class="card"><div class="stitle">Tutti i messaggi</div><div id="ablist"></div></div>
+  </div>
+
+  <div class="tc" id="t-aset">
+    <div class="card">
+      <div class="stitle">Vincoli di prenotazione</div>
+      <div class="cg">
+        <div><div style="font-size:13px;font-weight:500;">Max ore prenotabili per settimana</div><div style="font-size:11px;color:#888;">Ogni utente non può superare questo limite in una singola settimana (Lun–Dom)</div></div>
+        <div style="display:flex;gap:6px;"><input type="number" id="c-mw" min="1" max="40" style="width:70px;"><button class="btn btn-p btn-sm" onclick="saveC('mw')">Salva</button></div>
+      </div>
+      <div class="cg">
+        <div><div style="font-size:13px;font-weight:500;">Max ore consecutive prenotabili</div><div style="font-size:11px;color:#888;">Limite per una singola selezione continua. Contano tutte come ore settimanali.</div></div>
+        <div style="display:flex;gap:6px;"><input type="number" id="c-mc" min="1" max="8" style="width:70px;"><button class="btn btn-p btn-sm" onclick="saveC('mc')">Salva</button></div>
+      </div>
+      <div class="cg">
+        <div><div style="font-size:13px;font-weight:500;">Anticipo massimo prenotazione (settimane)</div><div style="font-size:11px;color:#888;">Quante settimane in anticipo si può prenotare</div></div>
+        <div style="display:flex;gap:6px;"><input type="number" id="c-ma" min="1" max="12" style="width:70px;"><button class="btn btn-p btn-sm" onclick="saveC('ma')">Salva</button></div>
+      </div>
+      <div class="cg">
+        <div><div style="font-size:13px;font-weight:500;">Periodo statistiche utente</div></div>
+        <div style="display:flex;gap:6px;">
+          <select id="c-sp" style="width:auto;">
+            <option value="ytd+30d">YTD + 30gg</option><option value="ytd">Solo YTD</option>
+            <option value="30d">Solo 30gg</option><option value="alltime">Tutto</option>
+          </select>
+          <button class="btn btn-p btn-sm" onclick="saveC('sp')">Salva</button>
+        </div>
+      </div>
+      <div id="cok" style="margin-top:6px;"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- MODAL ALLOCAZIONE -->
+<div id="alloc-modal" class="modal-bg" style="display:none;">
+  <div class="modal">
+    <h3>Alloca slot</h3>
+    <p id="alloc-modal-sub"></p>
+    <div class="ig"><label>Assegna a</label><select id="alloc-modal-user"></select></div>
+    <div class="note">ℹ️ Bypassa i vincoli di prenotazione</div>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button class="btn btn-pu btn-sm" onclick="confirmAllocModal()" style="flex:1;justify-content:center;">✓ Conferma</button>
+      <button class="btn btn-sm" onclick="closeAllocModal()" style="flex:1;justify-content:center;">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CANCELLAZIONE SLOT -->
+<div id="cancel-modal" class="modal-bg" style="display:none;">
+  <div class="modal">
+    <h3>Cancella prenotazione</h3>
+    <p id="cancel-modal-sub"></p>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button class="btn btn-d btn-sm" onclick="confirmCancelModal()" style="flex:1;justify-content:center;">🗑 Cancella</button>
+      <button class="btn btn-sm" onclick="closeCancelModal()" style="flex:1;justify-content:center;">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ELIMINA UTENTE -->
+<div id="deluser-modal" class="modal-bg" style="display:none;">
+  <div class="modal">
+    <h3>Elimina utente</h3>
+    <p id="deluser-modal-sub"></p>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button class="btn btn-d btn-sm" onclick="confirmDeleteUserModal()" style="flex:1;justify-content:center;">🗑 Elimina</button>
+      <button class="btn btn-sm" onclick="closeDelUserModal()" style="flex:1;justify-content:center;">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCDLd3MY2fsd44InCMj9-46MVd72U6Znsg",
+  authDomain: "tennis-alberti.firebaseapp.com",
+  projectId: "tennis-alberti",
+  storageBucket: "tennis-alberti.firebasestorage.app",
+  messagingSenderId: "1030200653949",
+  appId: "1:1030200653949:web:f03c15e1e6198b21bf9914"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+const DOC = doc(db, 'app', 'state');
+
+const HRS=[];for(let h=9;h<22;h++)HRS.push(h);
+const DN=['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+const MN=['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+
+// C.mw = max ore per settimana (default 4)
+// C.mc = max ore consecutive (default 2)
+// C.ma = anticipo max in settimane (default 2)
+// C.sp = periodo statistiche utente
+let S={users:{},bookings:[],messages:[],C:{mw:4,mc:2,ma:2,sp:'ytd+30d'}};
+let wOff=0, awOff=0, sel=[];
+let aPeriod='ytd', aPOpts={};
+let allocTarget=null, cancelTarget=null, delUserTarget=null;
+let unsubscribe=null;
+
+async function sv(){
+  try{ await setDoc(DOC,{users:S.users,bookings:S.bookings,messages:S.messages,C:S.C}); }
+  catch(e){console.error('Errore salvataggio:',e);}
+}
+
+async function load(){
+  try{
+    const snap=await getDoc(DOC);
+    if(snap.exists()){
+      const d=snap.data();
+      S.users=d.users||{};S.bookings=d.bookings||[];S.messages=d.messages||[];
+      S.C=Object.assign({mw:4,mc:2,ma:2,sp:'ytd+30d'},d.C||{});
+    }
+    if(!S.users.admin){S.users.admin={pass:'admin123',role:'admin',status:'approved',name:'Admin'};await sv();}
+  }catch(e){
+    console.error('Errore caricamento:',e);
+    if(!S.users.admin) S.users.admin={pass:'admin123',role:'admin',status:'approved',name:'Admin'};
+  }
+}
+
+function startRealtime(){
+  if(unsubscribe) unsubscribe();
+  unsubscribe=onSnapshot(DOC,(snap)=>{
+    if(!snap.exists()) return;
+    const d=snap.data();
+    S.users=d.users||{};S.bookings=d.bookings||[];S.messages=d.messages||[];
+    S.C=Object.assign({mw:4,mc:2,ma:2,sp:'ytd+30d'},d.C||{});
+    if(S.cu){
+      if(S.users[S.cu]?.role==='admin') renderAdmin();
+      else renderApp();
+    }
+  });
+}
+
+function showS(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('s-'+id).classList.add('active');}
+function xm(id,t,tp='e'){const el=document.getElementById(id);if(el)el.innerHTML=t?`<div class="${tp==='o'?'obox':'ebox'}">${t}</div>`:'';}
+function ds(d){return d.toISOString().split('T')[0];}
+function fL(s){const[y,m,g]=s.split('-');return`${g}/${m}/${y}`;}
+function fDT(iso){const d=new Date(iso);return`${pad(d.getDate())}/${pad(d.getMonth()+1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;}
+function pad(n){return String(n).padStart(2,'0');}
+function today(){return ds(new Date());}
+
+// Restituisce il lunedì della settimana che contiene la data dStr (formato YYYY-MM-DD)
+function weekStart(dStr){
+  const d=new Date(dStr);
+  const dow=d.getDay();
+  const diff=dow===0?-6:1-dow;
+  d.setDate(d.getDate()+diff);
+  return ds(d);
+}
+
+// Calcola le ore già prenotate dall'utente nella settimana che contiene dStr
+function hoursBookedInWeek(user, dStr){
+  const ws=weekStart(dStr);
+  const we=new Date(ws);we.setDate(we.getDate()+6);const weStr=ds(we);
+  return S.bookings.filter(b=>b.user===user&&b.status==='active'&&b.date>=ws&&b.date<=weStr).length;
+}
+
+// Calcola le ore selezionate (sel) che cadono nella stessa settimana di dStr
+function selHoursInWeek(dStr){
+  const ws=weekStart(dStr);
+  const we=new Date(ws);we.setDate(we.getDate()+6);const weStr=ds(we);
+  return sel.filter(c=>c.date>=ws&&c.date<=weStr).length;
+}
+
+function doLogin(){
+  const u=document.getElementById('lu').value.trim().toLowerCase();
+  const p=document.getElementById('lp').value.trim();
+  const usr=S.users[u];
+  if(!usr||usr.pass!==p)return xm('le','Credenziali non valide.');
+  S.cu=u;
+  if(usr.role==='admin'){renderAdmin();showS('admin');startRealtime();return;}
+  if(usr.status!=='approved')return xm('le','Account non attivo. Contatta l\'amministratore.');
+  wOff=0;sel=[];renderApp();showS('app');startRealtime();
+}
+function doLogout(){if(unsubscribe){unsubscribe();unsubscribe=null;}S.cu=null;showS('login');}
+
+function getWeek(off){
+  const now=new Date(),dow=now.getDay();
+  const mon=new Date(now);mon.setDate(now.getDate()-(dow===0?6:dow-1)+off*7);
+  const days=[];for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);days.push(d);}
+  return days;
+}
+
+function renderApp(){
+  if(!S.cu||!S.users[S.cu]) return;
+  document.getElementById('wname').textContent=S.users[S.cu].name;
+  document.getElementById('rule-hint').textContent=
+    `Max ${S.C.mw} ore/settimana · Max ${S.C.mc} ore consecutive · Anticipo max ${S.C.ma} sett.`;
+  renderWG();renderMyB();renderHist();renderUS();renderBacheca();checkUnread();
+}
+
+function shiftW(d){
+  const now=new Date(),max=new Date(now);max.setDate(now.getDate()+S.C.ma*7);
+  const days=getWeek(wOff+d);
+  if(d>0&&days[0]>max)return;
+  wOff+=d;sel=[];updateCP();renderWG();
+}
+
+function renderWG(){
+  const days=getWeek(wOff),ts=today(),now=new Date();
+  const max=new Date(now);max.setDate(now.getDate()+S.C.ma*7);
+  const d1=days[0],d2=days[6];
+  document.getElementById('wlabel').textContent=
+    `${d1.getDate()} ${d1.toLocaleString('it',{month:'short'})} – ${d2.getDate()} ${d2.toLocaleString('it',{month:'short',year:'2-digit'})}`;
+
+  // Mostra quota settimanale
+  const wsStr=ds(days[0]);
+  const booked=hoursBookedInWeek(S.cu, wsStr);
+  const selThisWeek=selHoursInWeek(wsStr);
+  const remaining=S.C.mw - booked - selThisWeek;
+  const qBar=document.getElementById('week-quota-bar');
+  if(qBar){
+    qBar.style.display='block';
+    qBar.textContent=`📊 Settimana corrente: ${booked+selThisWeek}/${S.C.mw} ore prenotate · Rimanenti: ${Math.max(0,remaining)}`;
+    qBar.style.background=remaining<=0?'#FCEBEB':remaining===1?'#FAEEDA':'#E1F5EE';
+    qBar.style.color=remaining<=0?'#501313':remaining===1?'#633806':'#085041';
+  }
+
+  const g=document.getElementById('wgrid');g.innerHTML='';
+  const co=document.createElement('div');co.className='wgh';g.appendChild(co);
+  days.forEach(d=>{
+    const it=ds(d)===ts;
+    const h=document.createElement('div');h.className='wgh'+(it?' tdc':'');
+    h.innerHTML=`<div>${DN[d.getDay()]}</div><div style="font-size:11px;">${d.getDate()}</div>`;
+    g.appendChild(h);
+  });
+  HRS.forEach(hr=>{
+    const hd=document.createElement('div');hd.className='wghr';hd.textContent=hr;g.appendChild(hd);
+    days.forEach(d=>{
+      const dStr=ds(d),it=dStr===ts;
+      const cell=document.createElement('div');
+      const past=dStr<ts||(dStr===ts&&hr<=now.getHours());
+      const future=d>max;
+      const bk=S.bookings.find(b=>b.date===dStr&&b.hour===hr&&b.status==='active');
+      const mine=bk&&bk.user===S.cu;
+      const ssel=sel.some(c=>c.date===dStr&&c.hour===hr);
+      cell.className='wgc'+(it?' tdc':'');
+      if(past) cell.className+=' past';
+      else if(future) cell.className+=' fl';
+      else if(ssel){
+        cell.className+=' sel';
+        const l=document.createElement('div');l.className='cl w';l.textContent='✓';cell.appendChild(l);
+        cell.onclick=()=>toggleSel(dStr,hr);
+      } else if(mine){
+        cell.className+=' mine';
+        const l=document.createElement('div');l.className='cl d';l.textContent='tuo';cell.appendChild(l);
+        cell.onclick=()=>{if(confirm(`Disdire ${fL(dStr)} ${hr}:00–${hr+1}:00?`))cancelSlot(dStr,hr);};
+      } else if(bk){
+        cell.className+=' occ';
+        const l=document.createElement('div');l.className='cl o';l.textContent=S.users[bk.user]?.name||bk.user;cell.appendChild(l);
+      } else {
+        cell.onclick=()=>toggleSel(dStr,hr);
+      }
+      g.appendChild(cell);
+    });
+  });
+}
+
+function toggleSel(date,hour){
+  xm('berr','');
+  const idx=sel.findIndex(c=>c.date===date&&c.hour===hour);
+  if(idx>=0){sel.splice(idx,1);updateCP();renderWG();return;}
+
+  // Controllo ore consecutive
+  // Prendi tutti i sel nella stessa data
+  const sameDaySel=sel.filter(c=>c.date===date).map(c=>c.hour).concat([hour]).sort((a,b)=>a-b);
+  // Trova il gruppo consecutivo che include l'ora corrente
+  let groupLen=1;
+  for(let i=0;i<sameDaySel.length-1;i++){
+    if(sameDaySel[i+1]-sameDaySel[i]===1){
+      // sono consecutive
+      const idx2=sameDaySel.indexOf(hour);
+      // conta il gruppo che include hour
+    }
+  }
+  // calcola la sequenza consecutiva che include l'ora
+  const allHours=sel.filter(c=>c.date===date).map(c=>c.hour).concat([hour]).sort((a,b)=>a-b);
+  // trova run che contiene hour
+  let runLen=0;
+  for(let i=0;i<allHours.length;i++){
+    let run=1;
+    for(let j=i+1;j<allHours.length;j++){
+      if(allHours[j]-allHours[j-1]===1) run++;
+      else break;
+    }
+    if(allHours[i]<=hour&&hour<=allHours[i+run-1]) runLen=run;
+  }
+  if(runLen>S.C.mc){xm('berr',`Max ${S.C.mc} ore consecutive per prenotazione.`);return;}
+
+  // Controllo quota settimanale
+  const ws=weekStart(date);
+  const weDate=new Date(ws);weDate.setDate(weDate.getDate()+6);const weStr=ds(weDate);
+  const bookedThisWeek=S.bookings.filter(b=>b.user===S.cu&&b.status==='active'&&b.date>=ws&&b.date<=weStr).length;
+  const selThisWeek=sel.filter(c=>c.date>=ws&&c.date<=weStr).length;
+  if(bookedThisWeek+selThisWeek+1>S.C.mw){
+    xm('berr',`Limite di ${S.C.mw} ore per questa settimana raggiunto. Hai già ${bookedThisWeek} ore prenotate e ${selThisWeek} selezionate.`);
+    return;
+  }
+
+  sel=[...sel,{date,hour}];updateCP();renderWG();
+}
+
+function updateCP(){
+  const panel=document.getElementById('cpanel'),list=document.getElementById('clist');
+  if(!sel.length){panel.style.display='none';renderWG();return;}
+  panel.style.display='block';
+
+  // Raggruppa per data per mostrare in modo leggibile
+  const byd={};
+  sel.forEach(c=>{if(!byd[c.date])byd[c.date]=[];byd[c.date].push(c.hour);});
+  let rows='';
+  Object.entries(byd).sort(([a],[b])=>a.localeCompare(b)).forEach(([date,hrs])=>{
+    hrs.sort((a,b)=>a-b);
+    rows+=`<div>· ${fL(date)} · ${hrs.map(h=>`${h}:00–${h+1}:00`).join(', ')}</div>`;
+  });
+
+  // Calcola ore per settimana dopo la selezione
+  const weekSummary={};
+  sel.forEach(c=>{const ws=weekStart(c.date);if(!weekSummary[ws])weekSummary[ws]=0;weekSummary[ws]++;});
+  const warnRows=Object.entries(weekSummary).map(([ws,cnt])=>{
+    const weDate=new Date(ws);weDate.setDate(weDate.getDate()+6);
+    const already=S.bookings.filter(b=>b.user===S.cu&&b.status==='active'&&b.date>=ws&&b.date<=ds(weDate)).length;
+    return`<div style="font-size:11px;color:#666;">Settimana ${fL(ws)}: ${already+cnt}/${S.C.mw} ore</div>`;
+  }).join('');
+
+  list.innerHTML=rows+`<div style="margin-top:5px;">${warnRows}</div>`;
+
+  // Aggiorna anche la quota bar
+  const days=getWeek(wOff);
+  const wsStr=ds(days[0]);
+  const bookedN=hoursBookedInWeek(S.cu,wsStr);
+  const selN=selHoursInWeek(wsStr);
+  const rem=S.C.mw-bookedN-selN;
+  const qBar=document.getElementById('week-quota-bar');
+  if(qBar){
+    qBar.textContent=`📊 Settimana corrente: ${bookedN+selN}/${S.C.mw} ore · Rimanenti: ${Math.max(0,rem)}`;
+    qBar.style.background=rem<=0?'#FCEBEB':rem===1?'#FAEEDA':'#E1F5EE';
+    qBar.style.color=rem<=0?'#501313':rem===1?'#633806':'#085041';
+  }
+}
+
+function clearSel(){sel=[];updateCP();xm('berr','');renderWG();}
+
+async function confirmBook(){
+  if(!sel.length)return;
+  // Verifica conflitti e quota
+  for(const c of sel){
+    if(S.bookings.find(b=>b.date===c.date&&b.hour===c.hour&&b.status==='active'))
+      return xm('berr',`Conflitto: ${c.date} ${c.hour}:00 già occupato.`);
+    const ws=weekStart(c.date);
+    const weDate=new Date(ws);weDate.setDate(weDate.getDate()+6);
+    // conta quante ore dell'utente ci sono in questa settimana (escluse le altre sel già verificate)
+  }
+  // Controllo settimanale globale
+  const weekCheck={};
+  sel.forEach(c=>{const ws=weekStart(c.date);if(!weekCheck[ws])weekCheck[ws]=0;weekCheck[ws]++;});
+  for(const [ws,cnt] of Object.entries(weekCheck)){
+    const weDate=new Date(ws);weDate.setDate(weDate.getDate()+6);const weStr=ds(weDate);
+    const already=S.bookings.filter(b=>b.user===S.cu&&b.status==='active'&&b.date>=ws&&b.date<=weStr).length;
+    if(already+cnt>S.C.mw)return xm('berr',`Supereresti il limite di ${S.C.mw} ore nella settimana del ${fL(ws)}.`);
+  }
+  for(const c of sel)
+    S.bookings.push({id:`${Date.now()}_${Math.random().toString(36).slice(2,6)}`,user:S.cu,date:c.date,hour:c.hour,status:'active',created:new Date().toISOString()});
+  await sv();
+  xm('bok',`${sel.length} ora/e prenotata/e!`,'o');
+  sel=[];updateCP();
+}
+
+async function cancelSlot(date,hour){
+  const b=S.bookings.find(b=>b.date===date&&b.hour===hour&&b.user===S.cu&&b.status==='active');
+  if(!b)return;b.status='cancelled';b.cancelledAt=new Date().toISOString();await sv();
+}
+async function cancelById(id){
+  const b=S.bookings.find(b=>b.id===id);
+  if(b){b.status='cancelled';b.cancelledAt=new Date().toISOString();}await sv();
+}
+
+function renderMyB(){
+  const el=document.getElementById('myblist');
+  const mine=S.bookings.filter(b=>b.user===S.cu&&b.status==='active').sort((a,b)=>a.date.localeCompare(b.date)||a.hour-b.hour);
+  if(!mine.length){el.innerHTML='<div class="empty">Nessuna prenotazione attiva</div>';return;}
+  // Raggruppa per settimana
+  const byWeek={};
+  mine.forEach(b=>{const ws=weekStart(b.date);if(!byWeek[ws])byWeek[ws]=[];byWeek[ws].push(b);});
+  let html='';
+  Object.entries(byWeek).sort(([a],[b])=>a.localeCompare(b)).forEach(([ws,bks])=>{
+    const weDate=new Date(ws);weDate.setDate(weDate.getDate()+6);
+    html+=`<div style="font-size:11px;font-weight:600;color:#666;text-transform:uppercase;padding:6px 0 3px;">Settimana ${fL(ws)} — ${bks.length}/${S.C.mw} ore</div>`;
+    html+=bks.map(b=>`<div class="row"><div><div style="font-weight:500;">${fL(b.date)}</div><div style="font-size:11px;color:#888;">${b.hour}:00–${b.hour+1}:00</div></div>
+      <div style="display:flex;align-items:center;gap:6px;"><span class="badge ${b.date<today()?'bk':'bg'}">${b.date<today()?'Passata':'Attiva'}</span>
+      <button class="btn btn-d btn-sm" onclick="cancelById('${b.id}')">✕ Disdici</button></div></div>`).join('');
+  });
+  el.innerHTML=html;
+}
+
+function renderHist(){
+  const el=document.getElementById('histlist');
+  const all=S.bookings.filter(b=>b.user===S.cu).sort((a,b)=>b.date.localeCompare(a.date)||b.hour-a.hour);
+  if(!all.length){el.innerHTML='<div class="empty">Nessuna prenotazione nello storico.</div>';return;}
+  el.innerHTML=all.map(b=>`<div class="row"><div><div>${fL(b.date)}</div><div style="font-size:11px;color:#888;">${b.hour}:00–${b.hour+1}:00</div></div>
+    <span class="badge ${b.status==='active'?'bg':b.status==='cancelled'?'br':'bk'}">${b.status==='active'?'Attiva':b.status==='cancelled'?'Cancellata':'Passata'}</span></div>`).join('');
+}
+
+function gSR(type){
+  const now=new Date(),t=today();
+  if(type==='ytd')return{start:`${now.getFullYear()}-01-01`,end:t};
+  const d=new Date(now);d.setDate(d.getDate()-30);return{start:ds(d),end:t};
+}
+
+function renderUS(){
+  const el=document.getElementById('ustats'),sp=S.C.sp||'ytd+30d';
+  const mine=S.bookings.filter(b=>b.user===S.cu);
+  const secs=[];
+  if(sp==='ytd+30d'||sp==='ytd')secs.push({label:`Anno ${new Date().getFullYear()}`,range:gSR('ytd')});
+  if(sp==='ytd+30d'||sp==='30d')secs.push({label:'Ultimi 30 giorni',range:gSR('30d')});
+  if(sp==='alltime')secs.push({label:'Tutto lo storico',range:{start:'2000-01-01',end:'2099-12-31'}});
+  el.innerHTML=secs.map(s=>{
+    const ok=mine.filter(b=>b.status!=='cancelled'&&b.date>=s.range.start&&b.date<=s.range.end);
+    const ca=mine.filter(b=>b.status==='cancelled'&&b.date>=s.range.start&&b.date<=s.range.end);
+    const hC={};HRS.forEach(h=>hC[h]=0);ok.forEach(b=>hC[b.hour]++);
+    const mH=Math.max(...Object.values(hC),1);
+    const dC=[0,0,0,0,0,0,0];ok.forEach(b=>{const d=new Date(b.date);dC[d.getDay()]++;});
+    const mD=Math.max(...dC,1);
+    const fH=Object.entries(hC).sort((a,b)=>b[1]-a[1])[0];
+    return`<div class="card"><div class="stitle">${s.label}</div>
+      <div class="sgrid">
+        <div class="sc"><div class="sn">${ok.length}</div><div class="sl">Ore prenotate</div></div>
+        <div class="sc"><div class="sn">${ca.length}</div><div class="sl">Cancellate</div></div>
+        <div class="sc"><div class="sn">${fH&&fH[1]>0?fH[0]+':00':'—'}</div><div class="sl">Fascia preferita</div></div>
+      </div>
+      <div style="margin-bottom:8px;"><div class="stitle" style="margin-bottom:5px;">Per giorno</div>
+        <div style="display:flex;align-items:flex-end;gap:5px;height:56px;">${dC.map((c,i)=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:#1D9E75;border-radius:2px 2px 0 0;height:${Math.round(c/mD*44)}px;min-height:${c?2:0}px;"></div><div style="font-size:9px;color:#aaa;">${DN[i]}</div></div>`).join('')}</div>
+      </div>
+      <div><div class="stitle" style="margin-bottom:5px;">Per fascia</div>
+        <div style="display:flex;align-items:flex-end;gap:2px;height:56px;">${HRS.map(h=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;"><div style="width:100%;background:#5DCAA5;border-radius:2px 2px 0 0;height:${Math.round(hC[h]/mH*44)}px;min-height:${hC[h]?2:0}px;"></div><div style="font-size:8px;color:#aaa;">${h}</div></div>`).join('')}</div>
+      </div></div>`;
+  }).join('');
+}
+
+async function postMsg(){
+  const text=document.getElementById('umtxt').value.trim();
+  if(!text)return xm('umerr','Scrivi qualcosa.');
+  S.messages.push({id:Date.now()+'',from:S.cu,name:S.users[S.cu].name,to:'all',text,ts:new Date().toISOString(),type:'user'});
+  await sv();document.getElementById('umtxt').value='';
+  xm('umerr','Pubblicato!','o');setTimeout(()=>xm('umerr',''),2000);
+}
+
+function renderBacheca(){
+  const el=document.getElementById('blist');
+  const vis=S.messages.filter(m=>m.to==='all'||m.to===S.cu||m.from===S.cu).sort((a,b)=>b.ts.localeCompare(a.ts));
+  if(!vis.length){el.innerHTML='<div class="empty">Nessun messaggio ancora.</div>';return;}
+  el.innerHTML=vis.map(m=>`<div class="mb ${m.type==='admin'?'adm':'usr'}">
+    <div style="font-size:13px;">${m.text}</div>
+    <div class="mm"><strong>${m.type==='admin'?'Admin':m.name}</strong> · ${fDT(m.ts)}${m.to!=='all'&&m.to!==S.cu?' · <span class="badge bb" style="font-size:9px;">privato</span>':''}</div>
+  </div>`).join('');
+}
+
+function checkUnread(){
+  const dot=document.getElementById('udot');if(!dot)return;
+  const lr=S.users[S.cu]?.lastRead||'';
+  dot.style.display=S.messages.some(m=>(m.to==='all'||m.to===S.cu)&&m.ts>lr&&m.from!==S.cu)?'inline-block':'none';
+}
+
+function sTab(tab,e){
+  document.querySelectorAll('#s-app .tc').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('#s-app .nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('t-'+tab).classList.add('active');
+  e.target.closest('.nb').classList.add('active');
+  if(tab==='mie')renderMyB();if(tab==='storico')renderHist();
+  if(tab==='stats')renderUS();if(tab==='prenota')renderWG();
+  if(tab==='bacheca'){
+    renderBacheca();
+    if(S.users[S.cu]){S.users[S.cu].lastRead=new Date().toISOString();sv();}
+    checkUnread();
+  }
+}
+
+// ADMIN
+function renderAdmin(){
+  fillSels();renderAUsers();renderACal();renderAStats();renderABacheca();renderConstraints();
+}
+function fillSels(){
+  const appr=Object.entries(S.users).filter(([k,v])=>v.role!=='admin'&&v.status==='approved');
+  const au=document.getElementById('astat-user');
+  if(au){const cv=au.value;au.innerHTML='<option value="all">Tutti</option>'+appr.map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');if(cv)au.value=cv;}
+  const mt=document.getElementById('msg-to');
+  if(mt)mt.innerHTML='<option value="all">📢 Tutti</option>'+appr.map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');
+}
+
+async function adminCreateUser(){
+  const un=document.getElementById('new-un').value.trim().toLowerCase();
+  const up=document.getElementById('new-up').value.trim();
+  const ud=document.getElementById('new-ud').value.trim();
+  if(!un||!up)return xm('num','Username e password obbligatori.');
+  if(S.users[un])return xm('num','Username già esistente.');
+  S.users[un]={pass:up,role:'user',status:'approved',name:ud||un,lastRead:''};
+  await sv();
+  document.getElementById('new-un').value='';document.getElementById('new-up').value='';document.getElementById('new-ud').value='';
+  xm('num',`Utente <strong>${ud||un}</strong> creato. Login: <strong>${un}</strong> / <strong>${up}</strong>`,'o');
+}
+
+function renderAUsers(){
+  const el=document.getElementById('ulist');
+  const u=Object.entries(S.users).filter(([k,v])=>v.role!=='admin');
+  if(!u.length){el.innerHTML='<div class="empty">Nessun utente.</div>';return;}
+  el.innerHTML='';
+  u.forEach(([k,v])=>{
+    const nb=S.bookings.filter(b=>b.user===k&&b.status==='active').length;
+    const row=document.createElement('div');row.className='row';
+    row.innerHTML=`<div><div style="font-weight:500;">${v.name}</div>
+      <div style="font-size:11px;color:#888;">@${k} · pwd: <code style="background:#f5f3ed;padding:1px 5px;border-radius:4px;">${v.pass}</code> · ${nb} slot attivi</div></div>
+      <div style="display:flex;align-items:center;gap:5px;"><span class="badge ${v.status==='approved'?'bg':'br'}">${v.status==='approved'?'Attivo':'Disab.'}</span></div>`;
+    const wrap=row.querySelector('div:last-child');
+    const btn=document.createElement('button');btn.className='btn btn-d btn-sm';btn.textContent='🗑';btn.type='button';
+    btn.addEventListener('click',()=>openDelUserModal(k));
+    wrap.appendChild(btn);el.appendChild(row);
+  });
+}
+
+function openDelUserModal(k){
+  if(!S.users[k])return;
+  delUserTarget=k;
+  const v=S.users[k];
+  const nb=S.bookings.filter(b=>b.user===k&&b.status==='active').length;
+  document.getElementById('deluser-modal-sub').textContent=
+    `Eliminare ${v.name} (@${k})?${nb>0?` I suoi ${nb} slot futuri verranno cancellati.`:''} Lo storico passato resta invariato.`;
+  document.getElementById('deluser-modal').style.display='flex';
+}
+function closeDelUserModal(){document.getElementById('deluser-modal').style.display='none';delUserTarget=null;}
+async function confirmDeleteUserModal(){
+  if(!delUserTarget)return;
+  const k=delUserTarget;
+  if(!S.users[k]){closeDelUserModal();return;}
+  const t=today();
+  S.bookings.filter(b=>b.user===k&&b.status==='active'&&b.date>=t).forEach(b=>{b.status='cancelled';b.cancelledAt=new Date().toISOString();b.cancelledBy='admin';});
+  delete S.users[k];
+  await sv();closeDelUserModal();
+  xm('num','Utente eliminato.','o');setTimeout(()=>xm('num',''),2000);
+}
+
+function shiftAW(d){awOff+=d;renderACal();}
+function renderACal(){
+  const days=getWeek(awOff),ts=today(),now=new Date();
+  const d1=days[0],d2=days[6];
+  document.getElementById('awlabel').textContent=
+    `${d1.getDate()} ${d1.toLocaleString('it',{month:'short'})} – ${d2.getDate()} ${d2.toLocaleString('it',{month:'short',year:'2-digit'})}`;
+  const g=document.getElementById('awgrid');g.innerHTML='';
+  const co=document.createElement('div');co.className='wgh';g.appendChild(co);
+  days.forEach(d=>{
+    const it=ds(d)===ts;
+    const h=document.createElement('div');h.className='wgh'+(it?' tdc':'');
+    h.innerHTML=`<div>${DN[d.getDay()]}</div><div style="font-size:11px;">${d.getDate()}</div>`;
+    g.appendChild(h);
+  });
+  HRS.forEach(hr=>{
+    const hd=document.createElement('div');hd.className='wghr';hd.textContent=hr;g.appendChild(hd);
+    days.forEach(d=>{
+      const dStr=ds(d),it=dStr===ts;
+      const past=dStr<ts||(dStr===ts&&hr<=now.getHours());
+      const bk=S.bookings.find(b=>b.date===dStr&&b.hour===hr&&b.status==='active');
+      const cell=document.createElement('div');
+      cell.className='wgc'+(it?' tdc':'');
+      if(past){cell.className+=' past';g.appendChild(cell);return;}
+      if(bk){
+        cell.className+=' occ';
+        const uname=S.users[bk.user]?.name||bk.user;
+        const lbl=document.createElement('div');lbl.className='cl o';lbl.style.fontSize='7px';lbl.textContent=uname;cell.appendChild(lbl);
+        cell.title=`${uname} — clicca per cancellare`;
+        const bid=bk.id;
+        cell.addEventListener('click',()=>openCancelModal(bid));
+      } else {
+        cell.className+=' afree';cell.title='Libero — clicca per allocare';
+        const dc=dStr,hc=hr;
+        cell.addEventListener('click',()=>openAllocModal(dc,hc));
+      }
+      g.appendChild(cell);
+    });
+  });
+}
+
+function openCancelModal(bid){
+  const b=S.bookings.find(x=>x.id===bid&&x.status==='active');
+  if(!b){xm('acal-msg','Prenotazione non trovata.');return;}
+  cancelTarget=bid;
+  const uname=S.users[b.user]?.name||b.user;
+  document.getElementById('cancel-modal-sub').textContent=
+    `${uname} — ${fL(b.date)} · ${b.hour}:00–${b.hour+1}:00. Vuoi forzare la cancellazione?`;
+  document.getElementById('cancel-modal').style.display='flex';
+}
+function closeCancelModal(){document.getElementById('cancel-modal').style.display='none';cancelTarget=null;}
+async function confirmCancelModal(){
+  if(!cancelTarget)return;
+  const b=S.bookings.find(x=>x.id===cancelTarget&&x.status==='active');
+  if(!b){closeCancelModal();return;}
+  const uname=S.users[b.user]?.name||b.user;
+  b.status='cancelled';b.cancelledAt=new Date().toISOString();b.cancelledBy='admin';
+  await sv();closeCancelModal();
+  xm('acal-msg',`Prenotazione di ${uname} cancellata.`,'o');
+  setTimeout(()=>xm('acal-msg',''),2500);
+}
+
+function openAllocModal(date,hour){
+  const appr=Object.entries(S.users).filter(([k,v])=>v.role!=='admin'&&v.status==='approved');
+  if(!appr.length){xm('acal-msg','Nessun utente approvato.');return;}
+  allocTarget={date,hour};
+  document.getElementById('alloc-modal-sub').textContent=`${fL(date)} · ${hour}:00–${hour+1}:00`;
+  const sel=document.getElementById('alloc-modal-user');
+  sel.innerHTML=appr.map(([k,v])=>`<option value="${k}">${v.name} (@${k})</option>`).join('');
+  document.getElementById('alloc-modal').style.display='flex';
+}
+function closeAllocModal(){document.getElementById('alloc-modal').style.display='none';allocTarget=null;}
+async function confirmAllocModal(){
+  if(!allocTarget)return;
+  const tu=document.getElementById('alloc-modal-user').value;
+  if(!tu)return;
+  const conflict=S.bookings.find(b=>b.date===allocTarget.date&&b.hour===allocTarget.hour&&b.status==='active');
+  if(conflict){xm('acal-msg','Slot già occupato.');closeAllocModal();return;}
+  // Admin bypassa tutti i vincoli
+  S.bookings.push({
+    id:`adm_${Date.now()}_${Math.random().toString(36).slice(2,6)}`,
+    user:tu,date:allocTarget.date,hour:allocTarget.hour,
+    status:'active',created:new Date().toISOString(),allocatedBy:'admin'
+  });
+  await sv();
+  const uname=S.users[tu]?.name||tu;
+  closeAllocModal();
+  xm('acal-msg',`✓ Slot allocato a ${uname}.`,'o');
+  setTimeout(()=>xm('acal-msg',''),2500);
+}
+
+function setAP(btn){
+  document.querySelectorAll('#apsel .ptag').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');aPeriod=btn.dataset.p;renderPEx();renderAStats();
+}
+function renderPEx(){
+  const ex=document.getElementById('pex');ex.innerHTML='';const now=new Date();
+  if(aPeriod==='week'){
+    ex.style.display='flex';
+    ex.innerHTML=`<button class="btn btn-sm btn-ic" onclick="aPOpts.wo=(aPOpts.wo||0)-1;renderPEx();renderAStats()">◀</button>
+      <span style="font-size:12px;font-weight:500;" id="pwl"></span>
+      <button class="btn btn-sm btn-ic" onclick="aPOpts.wo=(aPOpts.wo||0)+1;renderPEx();renderAStats()">▶</button>
+      <span style="font-size:11px;color:#aaa;align-self:center;">Cumul.: <input type="number" min="1" max="52" value="${aPOpts.wc||1}" onchange="aPOpts.wc=+this.value;renderAStats()" style="width:46px;display:inline;"> sett.</span>`;
+    setTimeout(()=>{const w=getWeek(aPOpts.wo||0),d1=w[0],d2=w[6],l=document.getElementById('pwl');if(l)l.textContent=`${d1.getDate()} ${d1.toLocaleString('it',{month:'short'})} – ${d2.getDate()} ${d2.toLocaleString('it',{month:'short'})}`;},0);
+  } else if(aPeriod==='month'){
+    ex.style.display='flex';
+    const m=aPOpts.m!==undefined?aPOpts.m:now.getMonth(),y=aPOpts.y||now.getFullYear();
+    ex.innerHTML=`<select onchange="aPOpts.m=+this.value;renderAStats()" style="width:auto;">${MN.map((n,i)=>`<option value="${i}" ${i===m?'selected':''}>${n}</option>`).join('')}</select>
+      <input type="number" min="2020" max="2099" value="${y}" onchange="aPOpts.y=+this.value;renderAStats()" style="width:76px;">
+      <span style="font-size:11px;color:#aaa;align-self:center;">Mesi: <input type="number" min="1" max="12" value="${aPOpts.mc||1}" onchange="aPOpts.mc=+this.value;renderAStats()" style="width:42px;display:inline;"></span>`;
+  } else if(aPeriod==='year'){
+    ex.style.display='flex';
+    ex.innerHTML=`<input type="number" min="2020" max="2099" value="${aPOpts.y||now.getFullYear()}" onchange="aPOpts.y=+this.value;renderAStats()" style="width:90px;">`;
+  } else if(aPeriod==='custom'){
+    ex.style.display='flex';
+    ex.innerHTML=`<input type="date" value="${aPOpts.s||ds(now)}" onchange="aPOpts.s=this.value;renderAStats()" style="width:135px;">
+      <span style="font-size:12px;align-self:center;">→</span>
+      <input type="date" value="${aPOpts.e||ds(now)}" onchange="aPOpts.e=this.value;renderAStats()" style="width:135px;">`;
+  } else ex.style.display='none';
+}
+function getAR(){
+  const now=new Date(),t=today(),y=now.getFullYear();
+  if(aPeriod==='ytd')return{s:`${y}-01-01`,e:t};
+  if(aPeriod==='30d'){const d=new Date(now);d.setDate(d.getDate()-30);return{s:ds(d),e:t};}
+  if(aPeriod==='7d'){const d=new Date(now);d.setDate(d.getDate()-7);return{s:ds(d),e:t};}
+  if(aPeriod==='week'){const o=aPOpts.wo||0,c=aPOpts.wc||1,w0=getWeek(o-(c-1)),wN=getWeek(o);return{s:ds(w0[0]),e:ds(wN[6])};}
+  if(aPeriod==='month'){const c=aPOpts.mc||1,em=aPOpts.m!==undefined?aPOpts.m:now.getMonth(),ey=aPOpts.y||y;let sm=em-(c-1),sy=ey;while(sm<0){sm+=12;sy--;}return{s:`${sy}-${pad(sm+1)}-01`,e:ds(new Date(ey,em+1,0))};}
+  if(aPeriod==='year'){const ay=aPOpts.y||y;return{s:`${ay}-01-01`,e:`${ay}-12-31`};}
+  if(aPeriod==='custom')return{s:aPOpts.s||t,e:aPOpts.e||t};
+  return{s:`${y}-01-01`,e:t};
+}
+function renderAStats(){
+  const el=document.getElementById('astats-content');
+  const {s,e}=getAR();
+  const uf=document.getElementById('astat-user')?.value||'all';
+  let bks=S.bookings.filter(b=>b.status!=='cancelled'&&b.date>=s&&b.date<=e);
+  if(uf!=='all')bks=bks.filter(b=>b.user===uf);
+  const tH=bks.length,uU=[...new Set(bks.map(b=>b.user))].length;
+  const ca=S.bookings.filter(b=>b.status==='cancelled'&&b.date>=s&&b.date<=e&&(uf==='all'||b.user===uf)).length;
+  const hC={};HRS.forEach(h=>hC[h]=0);bks.forEach(b=>hC[b.hour]++);
+  const mH=Math.max(...Object.values(hC),1);
+  const ub=uf==='all'?Object.entries(S.users).filter(([k,v])=>v.role!=='admin').map(([k,v])=>{
+    const n=bks.filter(b=>b.user===k).length;return n?`<div class="row" style="padding:6px 0;"><div>${v.name}</div><span class="badge bg">${n} h</span></div>`:''}).join(''):'';
+  el.innerHTML=`<div style="font-size:11px;color:#aaa;margin-bottom:8px;">Dal ${fL(s)} al ${fL(e)}</div>
+  <div class="sgrid">
+    <div class="sc"><div class="sn">${tH}</div><div class="sl">Ore prenotate</div></div>
+    <div class="sc"><div class="sn">${uU}</div><div class="sl">Utenti attivi</div></div>
+    <div class="sc"><div class="sn">${ca}</div><div class="sl">Cancellate</div></div>
+  </div>
+  <div><div class="stitle" style="margin-bottom:5px;">Per fascia oraria</div>
+    <div style="display:flex;align-items:flex-end;gap:2px;height:60px;">${HRS.map(h=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;"><div style="width:100%;background:#1D9E75;border-radius:2px 2px 0 0;height:${Math.round(hC[h]/mH*48)}px;min-height:${hC[h]?2:0}px;"></div><div style="font-size:8px;color:#aaa;">${h}</div></div>`).join('')}</div>
+  </div>
+  ${uf==='all'&&ub?`<div style="margin-top:10px;"><div class="stitle">Ore per utente</div>${ub||'<div class="empty" style="padding:.5rem;">Nessuna prenotazione.</div>'}</div>`:''}`;
+}
+
+async function sendAdmMsg(){
+  const sl=document.getElementById('msg-to');
+  const opts=[...sl.selectedOptions].map(o=>o.value);
+  const text=document.getElementById('mtxt').value.trim();
+  if(!text)return xm('mok','Scrivi un messaggio.');
+  if(!opts.length)return xm('mok','Seleziona destinatario.');
+  const tg=opts.includes('all')?['all']:opts;
+  tg.forEach(to=>S.messages.push({id:Date.now()+'_'+Math.random().toString(36).slice(2,5),from:'admin',name:'Admin',to,text,ts:new Date().toISOString(),type:'admin'}));
+  await sv();document.getElementById('mtxt').value='';
+  xm('mok',`Inviato a ${opts.includes('all')?'tutti':opts.length+' utenti'}.`,'o');setTimeout(()=>xm('mok',''),2500);
+}
+
+function renderABacheca(){
+  const el=document.getElementById('ablist');if(!el)return;
+  const msgs=[...S.messages].sort((a,b)=>b.ts.localeCompare(a.ts));
+  if(!msgs.length){el.innerHTML='<div class="empty">Nessun messaggio.</div>';return;}
+  el.innerHTML=msgs.map(m=>`<div class="mb ${m.type==='admin'?'adm':'usr'}">
+    <div style="font-size:13px;">${m.text}</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;">
+      <div class="mm"><strong>${m.type==='admin'?'Admin':m.name}</strong> · ${fDT(m.ts)} · A: ${m.to==='all'?'Tutti':S.users[m.to]?.name||m.to}</div>
+      <button class="btn btn-d btn-sm" onclick="delMsg('${m.id}')">🗑</button>
+    </div></div>`).join('');
+}
+async function delMsg(id){S.messages=S.messages.filter(m=>m.id!==id);await sv();}
+
+function renderConstraints(){
+  document.getElementById('c-mw').value=S.C.mw;
+  document.getElementById('c-mc').value=S.C.mc;
+  document.getElementById('c-ma').value=S.C.ma;
+  document.getElementById('c-sp').value=S.C.sp;
+}
+async function saveC(k){
+  if(k==='mw')S.C.mw=+document.getElementById('c-mw').value;
+  if(k==='mc')S.C.mc=+document.getElementById('c-mc').value;
+  if(k==='ma')S.C.ma=+document.getElementById('c-ma').value;
+  if(k==='sp')S.C.sp=document.getElementById('c-sp').value;
+  await sv();xm('cok','Vincolo salvato!','o');setTimeout(()=>xm('cok',''),2000);
+}
+
+function sAdmTab(tab,e){
+  document.querySelectorAll('#s-admin .tc').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('#s-admin .nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('t-'+tab).classList.add('active');
+  e.target.closest('.nb').classList.add('active');
+  if(tab==='astats'){fillSels();renderPEx();renderAStats();}
+  if(tab==='acal')renderACal();
+  if(tab==='ausers')renderAUsers();
+  if(tab==='amsg'){fillSels();renderABacheca();}
+  if(tab==='aset')renderConstraints();
+}
+
+// Esponi funzioni globali per onclick inline
+window.doLogin=doLogin;window.doLogout=doLogout;window.sTab=sTab;window.sAdmTab=sAdmTab;
+window.shiftW=shiftW;window.shiftAW=shiftAW;window.confirmBook=confirmBook;window.clearSel=clearSel;
+window.cancelById=cancelById;window.postMsg=postMsg;window.adminCreateUser=adminCreateUser;
+window.openDelUserModal=openDelUserModal;window.closeDelUserModal=closeDelUserModal;window.confirmDeleteUserModal=confirmDeleteUserModal;
+window.openCancelModal=openCancelModal;window.closeCancelModal=closeCancelModal;window.confirmCancelModal=confirmCancelModal;
+window.openAllocModal=openAllocModal;window.closeAllocModal=closeAllocModal;window.confirmAllocModal=confirmAllocModal;
+window.setAP=setAP;window.renderAStats=renderAStats;window.renderPEx=renderPEx;
+window.sendAdmMsg=sendAdmMsg;window.delMsg=delMsg;window.saveC=saveC;
+window.aPOpts=aPOpts;
+
+await load();
+</script>
+</body>
+</html>
