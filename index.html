@@ -1,106 +1,117 @@
 <!DOCTYPE html>
 <html lang="it">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Tennis Alberti">
+<meta name="theme-color" content="#1D9E75">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <title>Tennis Alberti</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:#1a1a18;background:#f5f3ed;}
-.app{max-width:720px;margin:0 auto;padding:.75rem;}
+html{-webkit-text-size-adjust:100%;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px;color:#1a1a18;background:#f5f3ed;padding-bottom:env(safe-area-inset-bottom);}
+.app{max-width:720px;margin:0 auto;padding:.75rem .75rem;}
 .screen{display:none;}.screen.active{display:block;}
 .card{background:#fff;border:.5px solid #e0ddd4;border-radius:10px;padding:1.1rem;margin-bottom:.9rem;}
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;border:.5px solid #c8c4b8;background:transparent;color:#1a1a18;font-size:13px;cursor:pointer;font-family:inherit;transition:background .12s;}
-.btn:hover{background:#f5f3ed;}
-.btn-p{background:#1D9E75;border-color:#1D9E75;color:#fff!important;}.btn-p:hover{background:#0F6E56;}
-.btn-d{border-color:#e74c3c;color:#c0392b;}.btn-d:hover{background:#fdf0ef;}
-.btn-pu{background:#534AB7;border-color:#534AB7;color:#fff!important;}.btn-pu:hover{background:#3d3690;}
-.btn-sm{padding:4px 9px;font-size:12px;}.btn-ic{padding:5px 7px;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:8px;border:.5px solid #c8c4b8;background:transparent;color:#1a1a18;font-size:14px;cursor:pointer;font-family:inherit;transition:background .12s;-webkit-tap-highlight-color:transparent;}
+.btn:hover,.btn:active{background:#f5f3ed;}
+.btn-p{background:#1D9E75;border-color:#1D9E75;color:#fff!important;}.btn-p:hover,.btn-p:active{background:#0F6E56;}
+.btn-d{border-color:#e74c3c;color:#c0392b;}.btn-d:hover,.btn-d:active{background:#fdf0ef;}
+.btn-pu{background:#534AB7;border-color:#534AB7;color:#fff!important;}
+.btn-warn{background:#BA7517;border-color:#BA7517;color:#fff!important;}
+.btn-sm{padding:5px 10px;font-size:13px;}.btn-ic{padding:6px 8px;}
 .ig{margin-bottom:10px;}
 .ig label{display:block;font-size:12px;color:#555;margin-bottom:3px;}
-input,select,textarea{width:100%;padding:7px 10px;border-radius:7px;border:.5px solid #c8c4b8;background:#fff;color:#1a1a18;font-size:13px;font-family:inherit;}
+input,select,textarea{width:100%;padding:9px 12px;border-radius:8px;border:.5px solid #c8c4b8;background:#fff;color:#1a1a18;font-size:14px;font-family:inherit;-webkit-appearance:none;appearance:none;}
 textarea{resize:vertical;min-height:64px;}
 input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E75;}
-.badge{display:inline-block;padding:2px 7px;border-radius:6px;font-size:11px;font-weight:500;}
+.badge{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:500;}
 .bg{background:#E1F5EE;color:#085041;}.br{background:#FCEBEB;color:#501313;}.bk{background:#F1EFE8;color:#2C2C2A;}.bb{background:#E6F1FB;color:#042C53;}
 .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;padding-bottom:.9rem;border-bottom:.5px solid #e0ddd4;}
 .nav{display:flex;gap:3px;background:#f5f3ed;border-radius:8px;padding:3px;margin-bottom:1.25rem;flex-wrap:wrap;}
-.nb{flex:1;min-width:48px;padding:6px 3px;border:none;background:transparent;color:#666;font-size:11px;border-radius:5px;cursor:pointer;font-family:inherit;transition:all .12s;white-space:nowrap;text-align:center;}
+.nb{flex:1;min-width:48px;padding:7px 3px;border:none;background:transparent;color:#666;font-size:11px;border-radius:6px;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;white-space:nowrap;text-align:center;}
 .nb.active{background:#fff;color:#1a1a18;font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.08);}
 .tc{display:none;}.tc.active{display:block;}
-.row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:.5px solid #e0ddd4;gap:8px;}
+.row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:.5px solid #e0ddd4;gap:8px;}
 .row:last-child{border-bottom:none;}
 .stitle{font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
-.empty{text-align:center;padding:1.5rem;color:#aaa;font-size:13px;}
-.ebox{font-size:13px;color:#c0392b;padding:7px 11px;background:#fdf0ef;border-radius:7px;margin:6px 0;}
-.obox{font-size:13px;color:#085041;padding:7px 11px;background:#E1F5EE;border-radius:7px;margin:6px 0;}
+.empty{text-align:center;padding:1.5rem;color:#aaa;font-size:14px;}
+.ebox{font-size:13px;color:#c0392b;padding:8px 12px;background:#fdf0ef;border-radius:8px;margin:6px 0;}
+.obox{font-size:13px;color:#085041;padding:8px 12px;background:#E1F5EE;border-radius:8px;margin:6px 0;}
 .sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.9rem;}
 .sc{background:#f5f3ed;border-radius:8px;padding:10px;text-align:center;}
 .sn{font-size:22px;font-weight:600;}.sl{font-size:11px;color:#666;margin-top:2px;}
 .wn{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .wl{font-size:13px;font-weight:500;}
-.wgw{overflow-x:auto;}
-.wg{display:grid;grid-template-columns:34px repeat(7,1fr);min-width:390px;}
+.wgw{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.wg{display:grid;grid-template-columns:34px repeat(7,1fr);min-width:380px;}
 .wgh{font-size:10px;font-weight:500;color:#666;text-align:center;padding:3px 1px;border-bottom:.5px solid #e0ddd4;}
 .wgh.tdc{color:#0F6E56;font-weight:600;}
 .wghr{font-size:9px;color:#aaa;text-align:right;padding-right:5px;display:flex;align-items:center;justify-content:flex-end;border-right:.5px solid #e0ddd4;}
-.wgc{border-bottom:.5px solid #e0ddd4;border-left:.5px solid #e0ddd4;min-height:24px;cursor:pointer;transition:background .1s;position:relative;}
-.wgc:hover{background:#f5f3ed;}
+.wgc{border-bottom:.5px solid #e0ddd4;border-left:.5px solid #e0ddd4;min-height:26px;cursor:pointer;transition:background .1s;position:relative;-webkit-tap-highlight-color:rgba(29,158,117,.15);}
 .wgc.past{opacity:.4;cursor:default;pointer-events:none;}
-.wgc.occ{background:#F0997B;}.wgc.occ:hover{background:#e8845e;}
+.wgc.occ{background:#F0997B;}
 .wgc.mine{background:#9FE1CB;}
 .wgc.sel{background:#1D9E75;}
 .wgc.tdc{background:rgba(29,158,117,.08);}
 .wgc.fl{opacity:.25;cursor:not-allowed;pointer-events:none;}
-.wgc.afree:hover{background:#EDE5FF;}
+.wgc.afree:active{background:#EDE5FF;}
 .cl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;overflow:hidden;padding:0 2px;text-align:center;line-height:1.1;pointer-events:none;}
 .cl.w{color:#fff;}.cl.d{color:#085041;}.cl.o{color:#7a3010;}
 .leg{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:#888;}
 .ldot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:3px;vertical-align:middle;}
 .cp{background:#f5f3ed;border-radius:8px;padding:10px;margin-top:10px;}
-.mb{padding:9px 11px;border-radius:8px;margin-bottom:7px;background:#f5f3ed;border:.5px solid #e0ddd4;}
+.mb{padding:10px 12px;border-radius:8px;margin-bottom:7px;background:#f5f3ed;border:.5px solid #e0ddd4;}
 .mb.adm{border-left:3px solid #534AB7;}.mb.usr{border-left:3px solid #1D9E75;}
 .mm{font-size:10px;color:#aaa;margin-top:4px;}
-.udot{display:inline-block;width:6px;height:6px;background:#e74c3c;border-radius:50%;margin-left:3px;vertical-align:middle;}
+.udot{display:inline-block;width:7px;height:7px;background:#e74c3c;border-radius:50%;margin-left:3px;vertical-align:middle;}
 .cg{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:10px 0;border-bottom:.5px solid #e0ddd4;}
 .cg:last-child{border-bottom:none;}
 .psel{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
-.ptag{padding:4px 10px;border-radius:6px;border:.5px solid #c8c4b8;font-size:12px;cursor:pointer;background:transparent;font-family:inherit;color:#666;transition:all .12s;}
+.ptag{padding:5px 10px;border-radius:6px;border:.5px solid #c8c4b8;font-size:12px;cursor:pointer;background:transparent;font-family:inherit;color:#666;}
 .ptag.active{background:#1D9E75;border-color:#1D9E75;color:#fff;}
 .pex{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px;}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;}
-.modal{background:#fff;border-radius:12px;padding:1.25rem;width:320px;max-width:100%;box-shadow:0 8px 32px rgba(0,0,0,.2);}
-.modal h3{font-size:15px;font-weight:600;margin-bottom:4px;}
-.modal p{font-size:12px;color:#888;margin-bottom:12px;}
-.note{font-size:11px;color:#888;margin-top:6px;display:flex;align-items:center;gap:5px;}
-.week-quota{background:#E1F5EE;border-radius:7px;padding:7px 11px;font-size:12px;color:#085041;margin-bottom:8px;}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;}
+.modal{background:#fff;border-radius:14px;padding:1.25rem;width:320px;max-width:calc(100vw - 2rem);box-shadow:0 8px 32px rgba(0,0,0,.2);}
+.modal h3{font-size:16px;font-weight:500;margin-bottom:4px;}
+.modal p{font-size:13px;color:#666;margin-bottom:14px;line-height:1.5;}
+.note{font-size:11px;color:#888;margin-top:6px;}
+.wqbar{border-radius:8px;padding:8px 12px;font-size:12px;margin-bottom:8px;}
+.warn-box{background:#FAEEDA;border:.5px solid #EF9F27;border-radius:8px;padding:12px;margin-bottom:10px;}
+.warn-box p{color:#633806;font-size:13px;line-height:1.5;}
 </style>
 </head>
 <body>
 <div class="app">
 
 <div class="screen active" id="s-login">
-  <div style="text-align:center;padding:1.5rem 0 1rem;">
-    <div style="width:52px;height:52px;background:#1D9E75;border-radius:13px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+  <div style="text-align:center;padding:2rem 0 1.25rem;">
+    <div style="width:56px;height:56px;background:#1D9E75;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
     </div>
-    <div style="font-size:21px;font-weight:600;margin-bottom:3px;">Tennis Alberti</div>
-    <div style="font-size:13px;color:#888;">Sistema di prenotazione condominiale</div>
+    <div style="font-size:22px;font-weight:500;margin-bottom:4px;">Tennis Alberti</div>
+    <div style="font-size:14px;color:#888;">Sistema di prenotazione condominiale</div>
   </div>
   <div class="card">
-    <div class="ig"><label>Username</label><input id="lu" placeholder="es. rossi"/></div>
-    <div class="ig"><label>Password</label><input id="lp" type="password" placeholder="••••••"/></div>
+    <div class="ig"><label>Username</label><input id="lu" placeholder="es. rossi" autocomplete="username"/></div>
+    <div class="ig"><label>Password</label><input id="lp" type="password" placeholder="••••••" autocomplete="current-password"/></div>
     <div id="le"></div>
-    <button class="btn btn-p" style="width:100%;justify-content:center;" onclick="doLogin()">Accedi</button>
-    <div style="text-align:center;margin-top:10px;font-size:12px;color:#aaa;">Per registrarti contatta l'amministratore.</div>
+    <button class="btn btn-p" style="width:100%;justify-content:center;font-size:15px;padding:10px;" onclick="doLogin()">Accedi</button>
+    <div style="text-align:center;margin-top:12px;font-size:12px;color:#aaa;">Per registrarti contatta l'amministratore.</div>
   </div>
 </div>
 
 <div class="screen" id="s-app">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:8px;">
-      <div style="width:30px;height:30px;background:#1D9E75;border-radius:7px;display:flex;align-items:center;justify-content:center;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+      <div style="width:32px;height:32px;background:#1D9E75;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
       </div>
-      <div><div style="font-size:14px;font-weight:600;">Tennis Alberti</div><div id="wname" style="font-size:11px;color:#888;"></div></div>
+      <div><div style="font-size:15px;font-weight:500;">Tennis Alberti</div><div id="wname" style="font-size:11px;color:#888;"></div></div>
     </div>
     <button class="btn btn-sm" onclick="doLogout()">Esci</button>
   </div>
@@ -108,7 +119,7 @@ input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E7
     <button class="nb active" onclick="sTab('prenota',event)">📅 Prenota</button>
     <button class="nb" onclick="sTab('mie',event)">✅ Le mie</button>
     <button class="nb" onclick="sTab('storico',event)">📋 Storico</button>
-    <button class="nb" onclick="sTab('stats',event)">📊 Statistiche</button>
+    <button class="nb" onclick="sTab('stats',event)">📊 Stats</button>
     <button class="nb" onclick="sTab('bacheca',event)">💬 Bacheca<span id="udot" style="display:none;" class="udot"></span></button>
   </div>
   <div class="tc active" id="t-prenota">
@@ -118,10 +129,10 @@ input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E7
         <div class="wl" id="wlabel"></div>
         <button class="btn btn-sm btn-ic" onclick="shiftW(1)">▶</button>
       </div>
-      <div id="week-quota-bar" class="week-quota" style="display:none;"></div>
+      <div id="wqbar" class="wqbar" style="display:none;"></div>
       <div class="wgw"><div class="wg" id="wgrid"></div></div>
       <div class="leg">
-        <span><span class="ldot" style="background:#1D9E75;"></span>Selezionato</span>
+        <span><span class="ldot" style="background:#1D9E75;"></span>Sel.</span>
         <span><span class="ldot" style="background:#9FE1CB;"></span>Tuo</span>
         <span><span class="ldot" style="background:#F0997B;"></span>Occupato</span>
       </div>
@@ -154,27 +165,28 @@ input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E7
 <div class="screen" id="s-admin">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:8px;">
-      <div style="width:30px;height:30px;background:#534AB7;border-radius:7px;display:flex;align-items:center;justify-content:center;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <div style="width:32px;height:32px;background:#534AB7;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       </div>
-      <div style="font-size:14px;font-weight:600;">Pannello Admin</div>
+      <div style="font-size:15px;font-weight:500;">Pannello Admin</div>
     </div>
     <button class="btn btn-sm" onclick="doLogout()">Esci</button>
   </div>
   <div class="nav">
     <button class="nb active" onclick="sAdmTab('ausers',event)">👥 Utenti</button>
-    <button class="nb" onclick="sAdmTab('acal',event)">📅 Calendario</button>
-    <button class="nb" onclick="sAdmTab('astats',event)">📊 Statistiche</button>
-    <button class="nb" onclick="sAdmTab('amsg',event)">💬 Messaggi</button>
+    <button class="nb" onclick="sAdmTab('acal',event)">📅 Cal.</button>
+    <button class="nb" onclick="sAdmTab('astats',event)">📊 Stats</button>
+    <button class="nb" onclick="sAdmTab('amsg',event)">💬 Msg</button>
     <button class="nb" onclick="sAdmTab('aset',event)">⚙️ Vincoli</button>
+    <button class="nb" onclick="sAdmTab('areset',event)">🔄 Reset</button>
   </div>
 
   <div class="tc active" id="t-ausers">
     <div class="card">
       <div class="stitle">Registra nuovo utente</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-        <div class="ig" style="margin-bottom:0;"><label>Username</label><input id="new-un" placeholder="es. rossi"/></div>
-        <div class="ig" style="margin-bottom:0;"><label>Password</label><input id="new-up" type="text" placeholder="Password"/></div>
+        <div class="ig" style="margin-bottom:0;"><label>Username</label><input id="new-un" placeholder="es. rossi" autocomplete="off"/></div>
+        <div class="ig" style="margin-bottom:0;"><label>Password</label><input id="new-up" type="text" placeholder="Password" autocomplete="off"/></div>
       </div>
       <div class="ig"><label>Nome visualizzato</label><input id="new-ud" placeholder="es. Marco Rossi"/></div>
       <button class="btn btn-p btn-sm" onclick="adminCreateUser()">+ Crea utente</button>
@@ -196,7 +208,7 @@ input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E7
         <span><span class="ldot" style="background:#F0997B;"></span>Prenotato — clicca per cancellare</span>
         <span><span class="ldot" style="background:#EDE5FF;border:1px solid #9F7AEA;"></span>Libero — clicca per allocare</span>
       </div>
-      <div class="note">ℹ️ Le allocazioni admin bypassano i vincoli di prenotazione.</div>
+      <div class="note">ℹ️ Le allocazioni admin bypassano i vincoli.</div>
     </div>
   </div>
 
@@ -205,12 +217,12 @@ input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E7
       <div class="stitle">Periodo di analisi</div>
       <div class="psel" id="apsel">
         <button class="ptag active" data-p="ytd" onclick="setAP(this)">YTD</button>
-        <button class="ptag" data-p="30d" onclick="setAP(this)">Ultimi 30gg</button>
-        <button class="ptag" data-p="7d" onclick="setAP(this)">Ultimi 7gg</button>
-        <button class="ptag" data-p="week" onclick="setAP(this)">Settimana</button>
+        <button class="ptag" data-p="30d" onclick="setAP(this)">30gg</button>
+        <button class="ptag" data-p="7d" onclick="setAP(this)">7gg</button>
+        <button class="ptag" data-p="week" onclick="setAP(this)">Sett.</button>
         <button class="ptag" data-p="month" onclick="setAP(this)">Mese</button>
         <button class="ptag" data-p="year" onclick="setAP(this)">Anno</button>
-        <button class="ptag" data-p="custom" onclick="setAP(this)">Personalizzato</button>
+        <button class="ptag" data-p="custom" onclick="setAP(this)">Custom</button>
       </div>
       <div id="pex" class="pex" style="display:none;"></div>
       <div class="ig" style="margin-bottom:8px;"><label>Utente</label>
@@ -224,7 +236,7 @@ input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E7
     <div class="card">
       <div class="stitle">Invia messaggio</div>
       <div class="ig"><label>Destinatari</label>
-        <select id="msg-to" multiple style="height:100px;"><option value="all" selected>📢 Tutti</option></select>
+        <select id="msg-to" multiple style="height:90px;"><option value="all" selected>📢 Tutti</option></select>
         <div style="font-size:11px;color:#aaa;margin-top:3px;">Ctrl/Cmd per più utenti.</div>
       </div>
       <div class="ig"><label>Messaggio</label><textarea id="mtxt" placeholder="Scrivi..."></textarea></div>
@@ -238,16 +250,16 @@ input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E7
     <div class="card">
       <div class="stitle">Vincoli di prenotazione</div>
       <div class="cg">
-        <div><div style="font-size:13px;font-weight:500;">Max ore prenotabili per settimana</div><div style="font-size:11px;color:#888;">Ogni utente non può superare questo limite in una singola settimana (Lun–Dom)</div></div>
-        <div style="display:flex;gap:6px;"><input type="number" id="c-mw" min="1" max="40" style="width:70px;"><button class="btn btn-p btn-sm" onclick="saveC('mw')">Salva</button></div>
+        <div><div style="font-size:13px;font-weight:500;">Max ore/settimana per utente</div><div style="font-size:11px;color:#888;">Limite Lun–Dom per ogni utente</div></div>
+        <div style="display:flex;gap:6px;"><input type="number" id="c-mw" min="1" max="40" style="width:65px;"><button class="btn btn-p btn-sm" onclick="saveC('mw')">Salva</button></div>
       </div>
       <div class="cg">
-        <div><div style="font-size:13px;font-weight:500;">Max ore consecutive prenotabili</div><div style="font-size:11px;color:#888;">Limite per una singola selezione continua. Contano tutte come ore settimanali.</div></div>
-        <div style="display:flex;gap:6px;"><input type="number" id="c-mc" min="1" max="8" style="width:70px;"><button class="btn btn-p btn-sm" onclick="saveC('mc')">Salva</button></div>
+        <div><div style="font-size:13px;font-weight:500;">Max ore consecutive</div><div style="font-size:11px;color:#888;">Contano come ore settimanali</div></div>
+        <div style="display:flex;gap:6px;"><input type="number" id="c-mc" min="1" max="8" style="width:65px;"><button class="btn btn-p btn-sm" onclick="saveC('mc')">Salva</button></div>
       </div>
       <div class="cg">
-        <div><div style="font-size:13px;font-weight:500;">Anticipo massimo prenotazione (settimane)</div><div style="font-size:11px;color:#888;">Quante settimane in anticipo si può prenotare</div></div>
-        <div style="display:flex;gap:6px;"><input type="number" id="c-ma" min="1" max="12" style="width:70px;"><button class="btn btn-p btn-sm" onclick="saveC('ma')">Salva</button></div>
+        <div><div style="font-size:13px;font-weight:500;">Anticipo massimo (settimane)</div><div style="font-size:11px;color:#888;">Quante sett. in anticipo si può prenotare</div></div>
+        <div style="display:flex;gap:6px;"><input type="number" id="c-ma" min="1" max="12" style="width:65px;"><button class="btn btn-p btn-sm" onclick="saveC('ma')">Salva</button></div>
       </div>
       <div class="cg">
         <div><div style="font-size:13px;font-weight:500;">Periodo statistiche utente</div></div>
@@ -262,6 +274,20 @@ input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E7
       <div id="cok" style="margin-top:6px;"></div>
     </div>
   </div>
+
+  <!-- TAB RESET — NUOVO -->
+  <div class="tc" id="t-areset">
+    <div class="card">
+      <div class="stitle">Reset dati app</div>
+      <div class="warn-box">
+        <p>⚠️ Questa operazione cancella <strong>tutte le prenotazioni</strong> (passate e future), tutti i messaggi in bacheca e azzera le statistiche.<br><br>
+        <strong>Gli utenti registrati NON vengono cancellati.</strong><br><br>
+        L'operazione è irreversibile. Usa solo a fine stagione o per riportare l'app allo stato iniziale.</p>
+      </div>
+      <button class="btn btn-warn" style="width:100%;justify-content:center;" onclick="openResetModal()">🔄 Esegui reset completo</button>
+      <div id="reset-msg" style="margin-top:8px;"></div>
+    </div>
+  </div>
 </div>
 </div>
 
@@ -272,7 +298,7 @@ input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E7
     <p id="alloc-modal-sub"></p>
     <div class="ig"><label>Assegna a</label><select id="alloc-modal-user"></select></div>
     <div class="note">ℹ️ Bypassa i vincoli di prenotazione</div>
-    <div style="display:flex;gap:8px;margin-top:10px;">
+    <div style="display:flex;gap:8px;margin-top:12px;">
       <button class="btn btn-pu btn-sm" onclick="confirmAllocModal()" style="flex:1;justify-content:center;">✓ Conferma</button>
       <button class="btn btn-sm" onclick="closeAllocModal()" style="flex:1;justify-content:center;">Annulla</button>
     </div>
@@ -284,7 +310,7 @@ input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E7
   <div class="modal">
     <h3>Cancella prenotazione</h3>
     <p id="cancel-modal-sub"></p>
-    <div style="display:flex;gap:8px;margin-top:10px;">
+    <div style="display:flex;gap:8px;margin-top:12px;">
       <button class="btn btn-d btn-sm" onclick="confirmCancelModal()" style="flex:1;justify-content:center;">🗑 Cancella</button>
       <button class="btn btn-sm" onclick="closeCancelModal()" style="flex:1;justify-content:center;">Annulla</button>
     </div>
@@ -296,9 +322,23 @@ input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E7
   <div class="modal">
     <h3>Elimina utente</h3>
     <p id="deluser-modal-sub"></p>
-    <div style="display:flex;gap:8px;margin-top:10px;">
+    <div style="display:flex;gap:8px;margin-top:12px;">
       <button class="btn btn-d btn-sm" onclick="confirmDeleteUserModal()" style="flex:1;justify-content:center;">🗑 Elimina</button>
       <button class="btn btn-sm" onclick="closeDelUserModal()" style="flex:1;justify-content:center;">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RESET -->
+<div id="reset-modal" class="modal-bg" style="display:none;">
+  <div class="modal">
+    <h3>Conferma reset</h3>
+    <p>Stai per cancellare tutte le prenotazioni e i messaggi. Gli utenti rimarranno.<br><br>Digita <strong>RESET</strong> per confermare.</p>
+    <div class="ig"><input id="reset-confirm-input" placeholder="Digita RESET" autocomplete="off"/></div>
+    <div id="reset-modal-err" style="margin-bottom:8px;"></div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-warn btn-sm" onclick="confirmReset()" style="flex:1;justify-content:center;">🔄 Conferma</button>
+      <button class="btn btn-sm" onclick="closeResetModal()" style="flex:1;justify-content:center;">Annulla</button>
     </div>
   </div>
 </div>
@@ -324,18 +364,14 @@ const HRS=[];for(let h=9;h<22;h++)HRS.push(h);
 const DN=['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
 const MN=['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
 
-// C.mw = max ore per settimana (default 4)
-// C.mc = max ore consecutive (default 2)
-// C.ma = anticipo max in settimane (default 2)
-// C.sp = periodo statistiche utente
 let S={users:{},bookings:[],messages:[],C:{mw:4,mc:2,ma:2,sp:'ytd+30d'}};
-let wOff=0, awOff=0, sel=[];
-let aPeriod='ytd', aPOpts={};
-let allocTarget=null, cancelTarget=null, delUserTarget=null;
+let wOff=0,awOff=0,sel=[];
+let aPeriod='ytd',aPOpts={};
+let allocTarget=null,cancelTarget=null,delUserTarget=null;
 let unsubscribe=null;
 
 async function sv(){
-  try{ await setDoc(DOC,{users:S.users,bookings:S.bookings,messages:S.messages,C:S.C}); }
+  try{await setDoc(DOC,{users:S.users,bookings:S.bookings,messages:S.messages,C:S.C});}
   catch(e){console.error('Errore salvataggio:',e);}
 }
 
@@ -349,23 +385,27 @@ async function load(){
     }
     if(!S.users.admin){S.users.admin={pass:'admin123',role:'admin',status:'approved',name:'Admin'};await sv();}
   }catch(e){
-    console.error('Errore caricamento:',e);
-    if(!S.users.admin) S.users.admin={pass:'admin123',role:'admin',status:'approved',name:'Admin'};
+    if(!S.users.admin)S.users.admin={pass:'admin123',role:'admin',status:'approved',name:'Admin'};
   }
 }
 
 function startRealtime(){
-  if(unsubscribe) unsubscribe();
+  if(unsubscribe)unsubscribe();
   unsubscribe=onSnapshot(DOC,(snap)=>{
-    if(!snap.exists()) return;
+    if(!snap.exists())return;
     const d=snap.data();
     S.users=d.users||{};S.bookings=d.bookings||[];S.messages=d.messages||[];
     S.C=Object.assign({mw:4,mc:2,ma:2,sp:'ytd+30d'},d.C||{});
     if(S.cu){
-      if(S.users[S.cu]?.role==='admin') renderAdmin();
-      else renderApp();
+      if(S.users[S.cu]?.role==='admin')renderAdmin();
+      else if(S.users[S.cu])renderApp();
     }
   });
+}
+
+// PWA service worker
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').catch(()=>{});
 }
 
 function showS(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('s-'+id).classList.add('active');}
@@ -376,28 +416,10 @@ function fDT(iso){const d=new Date(iso);return`${pad(d.getDate())}/${pad(d.getMo
 function pad(n){return String(n).padStart(2,'0');}
 function today(){return ds(new Date());}
 
-// Restituisce il lunedì della settimana che contiene la data dStr (formato YYYY-MM-DD)
-function weekStart(dStr){
-  const d=new Date(dStr);
-  const dow=d.getDay();
-  const diff=dow===0?-6:1-dow;
-  d.setDate(d.getDate()+diff);
-  return ds(d);
-}
-
-// Calcola le ore già prenotate dall'utente nella settimana che contiene dStr
-function hoursBookedInWeek(user, dStr){
-  const ws=weekStart(dStr);
-  const we=new Date(ws);we.setDate(we.getDate()+6);const weStr=ds(we);
-  return S.bookings.filter(b=>b.user===user&&b.status==='active'&&b.date>=ws&&b.date<=weStr).length;
-}
-
-// Calcola le ore selezionate (sel) che cadono nella stessa settimana di dStr
-function selHoursInWeek(dStr){
-  const ws=weekStart(dStr);
-  const we=new Date(ws);we.setDate(we.getDate()+6);const weStr=ds(we);
-  return sel.filter(c=>c.date>=ws&&c.date<=weStr).length;
-}
+function weekStart(dStr){const d=new Date(dStr),dow=d.getDay(),diff=dow===0?-6:1-dow;d.setDate(d.getDate()+diff);return ds(d);}
+function weekEnd(ws){const d=new Date(ws);d.setDate(d.getDate()+6);return ds(d);}
+function bookedHoursInWeek(user,dStr){const ws=weekStart(dStr),we=weekEnd(ws);return S.bookings.filter(b=>b.user===user&&b.status==='active'&&b.date>=ws&&b.date<=we).length;}
+function selHoursInWeek(dStr){const ws=weekStart(dStr),we=weekEnd(ws);return sel.filter(c=>c.date>=ws&&c.date<=we).length;}
 
 function doLogin(){
   const u=document.getElementById('lu').value.trim().toLowerCase();
@@ -406,7 +428,7 @@ function doLogin(){
   if(!usr||usr.pass!==p)return xm('le','Credenziali non valide.');
   S.cu=u;
   if(usr.role==='admin'){renderAdmin();showS('admin');startRealtime();return;}
-  if(usr.status!=='approved')return xm('le','Account non attivo. Contatta l\'amministratore.');
+  if(usr.status!=='approved')return xm('le','Account non attivo.');
   wOff=0;sel=[];renderApp();showS('app');startRealtime();
 }
 function doLogout(){if(unsubscribe){unsubscribe();unsubscribe=null;}S.cu=null;showS('login');}
@@ -419,10 +441,9 @@ function getWeek(off){
 }
 
 function renderApp(){
-  if(!S.cu||!S.users[S.cu]) return;
+  if(!S.cu||!S.users[S.cu])return;
   document.getElementById('wname').textContent=S.users[S.cu].name;
-  document.getElementById('rule-hint').textContent=
-    `Max ${S.C.mw} ore/settimana · Max ${S.C.mc} ore consecutive · Anticipo max ${S.C.ma} sett.`;
+  document.getElementById('rule-hint').textContent=`Max ${S.C.mw} ore/sett. · Max ${S.C.mc} consecutive · Anticipo max ${S.C.ma} sett.`;
   renderWG();renderMyB();renderHist();renderUS();renderBacheca();checkUnread();
 }
 
@@ -433,26 +454,24 @@ function shiftW(d){
   wOff+=d;sel=[];updateCP();renderWG();
 }
 
+function updateQuotaBar(){
+  const days=getWeek(wOff),wsStr=ds(days[0]);
+  const booked=bookedHoursInWeek(S.cu,wsStr);
+  const selN=selHoursInWeek(wsStr);
+  const total=booked+selN,rem=S.C.mw-total;
+  const bar=document.getElementById('wqbar');if(!bar)return;
+  bar.style.display='block';
+  bar.textContent=`Quota settimana: ${total}/${S.C.mw} ore · Rimanenti: ${Math.max(0,rem)}`;
+  bar.style.background=rem<=0?'#FCEBEB':rem===1?'#FAEEDA':'#E1F5EE';
+  bar.style.color=rem<=0?'#501313':rem===1?'#633806':'#085041';
+}
+
 function renderWG(){
   const days=getWeek(wOff),ts=today(),now=new Date();
   const max=new Date(now);max.setDate(now.getDate()+S.C.ma*7);
   const d1=days[0],d2=days[6];
-  document.getElementById('wlabel').textContent=
-    `${d1.getDate()} ${d1.toLocaleString('it',{month:'short'})} – ${d2.getDate()} ${d2.toLocaleString('it',{month:'short',year:'2-digit'})}`;
-
-  // Mostra quota settimanale
-  const wsStr=ds(days[0]);
-  const booked=hoursBookedInWeek(S.cu, wsStr);
-  const selThisWeek=selHoursInWeek(wsStr);
-  const remaining=S.C.mw - booked - selThisWeek;
-  const qBar=document.getElementById('week-quota-bar');
-  if(qBar){
-    qBar.style.display='block';
-    qBar.textContent=`📊 Settimana corrente: ${booked+selThisWeek}/${S.C.mw} ore prenotate · Rimanenti: ${Math.max(0,remaining)}`;
-    qBar.style.background=remaining<=0?'#FCEBEB':remaining===1?'#FAEEDA':'#E1F5EE';
-    qBar.style.color=remaining<=0?'#501313':remaining===1?'#633806':'#085041';
-  }
-
+  document.getElementById('wlabel').textContent=`${d1.getDate()} ${d1.toLocaleString('it',{month:'short'})} – ${d2.getDate()} ${d2.toLocaleString('it',{month:'short',year:'2-digit'})}`;
+  updateQuotaBar();
   const g=document.getElementById('wgrid');g.innerHTML='';
   const co=document.createElement('div');co.className='wgh';g.appendChild(co);
   days.forEach(d=>{
@@ -472,8 +491,8 @@ function renderWG(){
       const mine=bk&&bk.user===S.cu;
       const ssel=sel.some(c=>c.date===dStr&&c.hour===hr);
       cell.className='wgc'+(it?' tdc':'');
-      if(past) cell.className+=' past';
-      else if(future) cell.className+=' fl';
+      if(past)cell.className+=' past';
+      else if(future)cell.className+=' fl';
       else if(ssel){
         cell.className+=' sel';
         const l=document.createElement('div');l.className='cl w';l.textContent='✓';cell.appendChild(l);
@@ -497,109 +516,55 @@ function toggleSel(date,hour){
   xm('berr','');
   const idx=sel.findIndex(c=>c.date===date&&c.hour===hour);
   if(idx>=0){sel.splice(idx,1);updateCP();renderWG();return;}
-
-  // Controllo ore consecutive
-  // Prendi tutti i sel nella stessa data
-  const sameDaySel=sel.filter(c=>c.date===date).map(c=>c.hour).concat([hour]).sort((a,b)=>a-b);
-  // Trova il gruppo consecutivo che include l'ora corrente
-  let groupLen=1;
-  for(let i=0;i<sameDaySel.length-1;i++){
-    if(sameDaySel[i+1]-sameDaySel[i]===1){
-      // sono consecutive
-      const idx2=sameDaySel.indexOf(hour);
-      // conta il gruppo che include hour
-    }
-  }
-  // calcola la sequenza consecutiva che include l'ora
-  const allHours=sel.filter(c=>c.date===date).map(c=>c.hour).concat([hour]).sort((a,b)=>a-b);
-  // trova run che contiene hour
-  let runLen=0;
-  for(let i=0;i<allHours.length;i++){
+  const sameDayHours=sel.filter(c=>c.date===date).map(c=>c.hour).concat([hour]).sort((a,b)=>a-b);
+  let maxRun=1;
+  for(let i=0;i<sameDayHours.length;i++){
     let run=1;
-    for(let j=i+1;j<allHours.length;j++){
-      if(allHours[j]-allHours[j-1]===1) run++;
-      else break;
-    }
-    if(allHours[i]<=hour&&hour<=allHours[i+run-1]) runLen=run;
+    for(let j=i+1;j<sameDayHours.length;j++){if(sameDayHours[j]-sameDayHours[j-1]===1)run++;else break;}
+    if(sameDayHours[i]<=hour&&hour<=sameDayHours[i+run-1])maxRun=Math.max(maxRun,run);
   }
-  if(runLen>S.C.mc){xm('berr',`Max ${S.C.mc} ore consecutive per prenotazione.`);return;}
-
-  // Controllo quota settimanale
-  const ws=weekStart(date);
-  const weDate=new Date(ws);weDate.setDate(weDate.getDate()+6);const weStr=ds(weDate);
-  const bookedThisWeek=S.bookings.filter(b=>b.user===S.cu&&b.status==='active'&&b.date>=ws&&b.date<=weStr).length;
-  const selThisWeek=sel.filter(c=>c.date>=ws&&c.date<=weStr).length;
-  if(bookedThisWeek+selThisWeek+1>S.C.mw){
-    xm('berr',`Limite di ${S.C.mw} ore per questa settimana raggiunto. Hai già ${bookedThisWeek} ore prenotate e ${selThisWeek} selezionate.`);
-    return;
-  }
-
+  if(maxRun>S.C.mc){xm('berr',`Max ${S.C.mc} ore consecutive.`);return;}
+  const ws=weekStart(date),we=weekEnd(ws);
+  const booked=S.bookings.filter(b=>b.user===S.cu&&b.status==='active'&&b.date>=ws&&b.date<=we).length;
+  const selW=sel.filter(c=>c.date>=ws&&c.date<=we).length;
+  if(booked+selW+1>S.C.mw){xm('berr',`Limite ${S.C.mw} ore/settimana raggiunto (${booked} prenotate + ${selW} selezionate).`);return;}
   sel=[...sel,{date,hour}];updateCP();renderWG();
 }
 
 function updateCP(){
   const panel=document.getElementById('cpanel'),list=document.getElementById('clist');
-  if(!sel.length){panel.style.display='none';renderWG();return;}
+  updateQuotaBar();
+  if(!sel.length){panel.style.display='none';return;}
   panel.style.display='block';
-
-  // Raggruppa per data per mostrare in modo leggibile
-  const byd={};
-  sel.forEach(c=>{if(!byd[c.date])byd[c.date]=[];byd[c.date].push(c.hour);});
+  const byd={};sel.forEach(c=>{if(!byd[c.date])byd[c.date]=[];byd[c.date].push(c.hour);});
   let rows='';
   Object.entries(byd).sort(([a],[b])=>a.localeCompare(b)).forEach(([date,hrs])=>{
     hrs.sort((a,b)=>a-b);
     rows+=`<div>· ${fL(date)} · ${hrs.map(h=>`${h}:00–${h+1}:00`).join(', ')}</div>`;
   });
-
-  // Calcola ore per settimana dopo la selezione
-  const weekSummary={};
-  sel.forEach(c=>{const ws=weekStart(c.date);if(!weekSummary[ws])weekSummary[ws]=0;weekSummary[ws]++;});
-  const warnRows=Object.entries(weekSummary).map(([ws,cnt])=>{
-    const weDate=new Date(ws);weDate.setDate(weDate.getDate()+6);
-    const already=S.bookings.filter(b=>b.user===S.cu&&b.status==='active'&&b.date>=ws&&b.date<=ds(weDate)).length;
-    return`<div style="font-size:11px;color:#666;">Settimana ${fL(ws)}: ${already+cnt}/${S.C.mw} ore</div>`;
+  const weekMap={};sel.forEach(c=>{const ws=weekStart(c.date);if(!weekMap[ws])weekMap[ws]=0;weekMap[ws]++;});
+  const wrows=Object.entries(weekMap).map(([ws,cnt])=>{
+    const booked=S.bookings.filter(b=>b.user===S.cu&&b.status==='active'&&b.date>=ws&&b.date<=weekEnd(ws)).length;
+    return`<div style="font-size:11px;color:#666;margin-top:3px;">Sett. ${fL(ws)}: ${booked+cnt}/${S.C.mw} ore</div>`;
   }).join('');
-
-  list.innerHTML=rows+`<div style="margin-top:5px;">${warnRows}</div>`;
-
-  // Aggiorna anche la quota bar
-  const days=getWeek(wOff);
-  const wsStr=ds(days[0]);
-  const bookedN=hoursBookedInWeek(S.cu,wsStr);
-  const selN=selHoursInWeek(wsStr);
-  const rem=S.C.mw-bookedN-selN;
-  const qBar=document.getElementById('week-quota-bar');
-  if(qBar){
-    qBar.textContent=`📊 Settimana corrente: ${bookedN+selN}/${S.C.mw} ore · Rimanenti: ${Math.max(0,rem)}`;
-    qBar.style.background=rem<=0?'#FCEBEB':rem===1?'#FAEEDA':'#E1F5EE';
-    qBar.style.color=rem<=0?'#501313':rem===1?'#633806':'#085041';
-  }
+  list.innerHTML=rows+wrows;
 }
 
 function clearSel(){sel=[];updateCP();xm('berr','');renderWG();}
 
 async function confirmBook(){
   if(!sel.length)return;
-  // Verifica conflitti e quota
-  for(const c of sel){
+  for(const c of sel)
     if(S.bookings.find(b=>b.date===c.date&&b.hour===c.hour&&b.status==='active'))
-      return xm('berr',`Conflitto: ${c.date} ${c.hour}:00 già occupato.`);
-    const ws=weekStart(c.date);
-    const weDate=new Date(ws);weDate.setDate(weDate.getDate()+6);
-    // conta quante ore dell'utente ci sono in questa settimana (escluse le altre sel già verificate)
-  }
-  // Controllo settimanale globale
-  const weekCheck={};
-  sel.forEach(c=>{const ws=weekStart(c.date);if(!weekCheck[ws])weekCheck[ws]=0;weekCheck[ws]++;});
-  for(const [ws,cnt] of Object.entries(weekCheck)){
-    const weDate=new Date(ws);weDate.setDate(weDate.getDate()+6);const weStr=ds(weDate);
-    const already=S.bookings.filter(b=>b.user===S.cu&&b.status==='active'&&b.date>=ws&&b.date<=weStr).length;
-    if(already+cnt>S.C.mw)return xm('berr',`Supereresti il limite di ${S.C.mw} ore nella settimana del ${fL(ws)}.`);
+      return xm('berr',`Conflitto: ${fL(c.date)} ${c.hour}:00 già occupato.`);
+  const wmap={};sel.forEach(c=>{const ws=weekStart(c.date);if(!wmap[ws])wmap[ws]=0;wmap[ws]++;});
+  for(const[ws,cnt]of Object.entries(wmap)){
+    const booked=S.bookings.filter(b=>b.user===S.cu&&b.status==='active'&&b.date>=ws&&b.date<=weekEnd(ws)).length;
+    if(booked+cnt>S.C.mw)return xm('berr',`Supereresti il limite di ${S.C.mw} ore nella settimana del ${fL(ws)}.`);
   }
   for(const c of sel)
     S.bookings.push({id:`${Date.now()}_${Math.random().toString(36).slice(2,6)}`,user:S.cu,date:c.date,hour:c.hour,status:'active',created:new Date().toISOString()});
-  await sv();
-  xm('bok',`${sel.length} ora/e prenotata/e!`,'o');
+  await sv();xm('bok',`${sel.length} ora/e confermata/e!`,'o');
   sel=[];updateCP();
 }
 
@@ -616,12 +581,9 @@ function renderMyB(){
   const el=document.getElementById('myblist');
   const mine=S.bookings.filter(b=>b.user===S.cu&&b.status==='active').sort((a,b)=>a.date.localeCompare(b.date)||a.hour-b.hour);
   if(!mine.length){el.innerHTML='<div class="empty">Nessuna prenotazione attiva</div>';return;}
-  // Raggruppa per settimana
-  const byWeek={};
-  mine.forEach(b=>{const ws=weekStart(b.date);if(!byWeek[ws])byWeek[ws]=[];byWeek[ws].push(b);});
+  const byWeek={};mine.forEach(b=>{const ws=weekStart(b.date);if(!byWeek[ws])byWeek[ws]=[];byWeek[ws].push(b);});
   let html='';
   Object.entries(byWeek).sort(([a],[b])=>a.localeCompare(b)).forEach(([ws,bks])=>{
-    const weDate=new Date(ws);weDate.setDate(weDate.getDate()+6);
     html+=`<div style="font-size:11px;font-weight:600;color:#666;text-transform:uppercase;padding:6px 0 3px;">Settimana ${fL(ws)} — ${bks.length}/${S.C.mw} ore</div>`;
     html+=bks.map(b=>`<div class="row"><div><div style="font-weight:500;">${fL(b.date)}</div><div style="font-size:11px;color:#888;">${b.hour}:00–${b.hour+1}:00</div></div>
       <div style="display:flex;align-items:center;gap:6px;"><span class="badge ${b.date<today()?'bk':'bg'}">${b.date<today()?'Passata':'Attiva'}</span>
@@ -705,17 +667,12 @@ function sTab(tab,e){
   e.target.closest('.nb').classList.add('active');
   if(tab==='mie')renderMyB();if(tab==='storico')renderHist();
   if(tab==='stats')renderUS();if(tab==='prenota')renderWG();
-  if(tab==='bacheca'){
-    renderBacheca();
-    if(S.users[S.cu]){S.users[S.cu].lastRead=new Date().toISOString();sv();}
-    checkUnread();
-  }
+  if(tab==='bacheca'){renderBacheca();if(S.users[S.cu]){S.users[S.cu].lastRead=new Date().toISOString();sv();}checkUnread();}
 }
 
 // ADMIN
-function renderAdmin(){
-  fillSels();renderAUsers();renderACal();renderAStats();renderABacheca();renderConstraints();
-}
+function renderAdmin(){fillSels();renderAUsers();renderACal();renderAStats();renderABacheca();renderConstraints();}
+
 function fillSels(){
   const appr=Object.entries(S.users).filter(([k,v])=>v.role!=='admin'&&v.status==='approved');
   const au=document.getElementById('astat-user');
@@ -734,6 +691,7 @@ async function adminCreateUser(){
   await sv();
   document.getElementById('new-un').value='';document.getElementById('new-up').value='';document.getElementById('new-ud').value='';
   xm('num',`Utente <strong>${ud||un}</strong> creato. Login: <strong>${un}</strong> / <strong>${up}</strong>`,'o');
+  renderAUsers();fillSels();
 }
 
 function renderAUsers(){
@@ -745,7 +703,7 @@ function renderAUsers(){
     const nb=S.bookings.filter(b=>b.user===k&&b.status==='active').length;
     const row=document.createElement('div');row.className='row';
     row.innerHTML=`<div><div style="font-weight:500;">${v.name}</div>
-      <div style="font-size:11px;color:#888;">@${k} · pwd: <code style="background:#f5f3ed;padding:1px 5px;border-radius:4px;">${v.pass}</code> · ${nb} slot attivi</div></div>
+      <div style="font-size:11px;color:#888;">@${k} · pwd: <code style="background:#f5f3ed;padding:1px 5px;border-radius:4px;">${v.pass}</code> · ${nb} attivi</div></div>
       <div style="display:flex;align-items:center;gap:5px;"><span class="badge ${v.status==='approved'?'bg':'br'}">${v.status==='approved'?'Attivo':'Disab.'}</span></div>`;
     const wrap=row.querySelector('div:last-child');
     const btn=document.createElement('button');btn.className='btn btn-d btn-sm';btn.textContent='🗑';btn.type='button';
@@ -759,28 +717,26 @@ function openDelUserModal(k){
   delUserTarget=k;
   const v=S.users[k];
   const nb=S.bookings.filter(b=>b.user===k&&b.status==='active').length;
-  document.getElementById('deluser-modal-sub').textContent=
-    `Eliminare ${v.name} (@${k})?${nb>0?` I suoi ${nb} slot futuri verranno cancellati.`:''} Lo storico passato resta invariato.`;
+  document.getElementById('deluser-modal-sub').textContent=`Eliminare ${v.name} (@${k})?${nb>0?` I suoi ${nb} slot futuri verranno cancellati.`:''} Lo storico passato resta invariato.`;
   document.getElementById('deluser-modal').style.display='flex';
 }
 function closeDelUserModal(){document.getElementById('deluser-modal').style.display='none';delUserTarget=null;}
 async function confirmDeleteUserModal(){
   if(!delUserTarget)return;
-  const k=delUserTarget;
-  if(!S.users[k]){closeDelUserModal();return;}
+  const k=delUserTarget;if(!S.users[k]){closeDelUserModal();return;}
   const t=today();
   S.bookings.filter(b=>b.user===k&&b.status==='active'&&b.date>=t).forEach(b=>{b.status='cancelled';b.cancelledAt=new Date().toISOString();b.cancelledBy='admin';});
   delete S.users[k];
   await sv();closeDelUserModal();
   xm('num','Utente eliminato.','o');setTimeout(()=>xm('num',''),2000);
+  renderAUsers();fillSels();
 }
 
 function shiftAW(d){awOff+=d;renderACal();}
 function renderACal(){
   const days=getWeek(awOff),ts=today(),now=new Date();
   const d1=days[0],d2=days[6];
-  document.getElementById('awlabel').textContent=
-    `${d1.getDate()} ${d1.toLocaleString('it',{month:'short'})} – ${d2.getDate()} ${d2.toLocaleString('it',{month:'short',year:'2-digit'})}`;
+  document.getElementById('awlabel').textContent=`${d1.getDate()} ${d1.toLocaleString('it',{month:'short'})} – ${d2.getDate()} ${d2.toLocaleString('it',{month:'short',year:'2-digit'})}`;
   const g=document.getElementById('awgrid');g.innerHTML='';
   const co=document.createElement('div');co.className='wgh';g.appendChild(co);
   days.forEach(d=>{
@@ -803,12 +759,10 @@ function renderACal(){
         const uname=S.users[bk.user]?.name||bk.user;
         const lbl=document.createElement('div');lbl.className='cl o';lbl.style.fontSize='7px';lbl.textContent=uname;cell.appendChild(lbl);
         cell.title=`${uname} — clicca per cancellare`;
-        const bid=bk.id;
-        cell.addEventListener('click',()=>openCancelModal(bid));
+        const bid=bk.id;cell.addEventListener('click',()=>openCancelModal(bid));
       } else {
         cell.className+=' afree';cell.title='Libero — clicca per allocare';
-        const dc=dStr,hc=hr;
-        cell.addEventListener('click',()=>openAllocModal(dc,hc));
+        const dc=dStr,hc=hr;cell.addEventListener('click',()=>openAllocModal(dc,hc));
       }
       g.appendChild(cell);
     });
@@ -820,8 +774,7 @@ function openCancelModal(bid){
   if(!b){xm('acal-msg','Prenotazione non trovata.');return;}
   cancelTarget=bid;
   const uname=S.users[b.user]?.name||b.user;
-  document.getElementById('cancel-modal-sub').textContent=
-    `${uname} — ${fL(b.date)} · ${b.hour}:00–${b.hour+1}:00. Vuoi forzare la cancellazione?`;
+  document.getElementById('cancel-modal-sub').textContent=`${uname} — ${fL(b.date)} · ${b.hour}:00–${b.hour+1}:00. Forzare la cancellazione?`;
   document.getElementById('cancel-modal').style.display='flex';
 }
 function closeCancelModal(){document.getElementById('cancel-modal').style.display='none';cancelTarget=null;}
@@ -831,9 +784,8 @@ async function confirmCancelModal(){
   if(!b){closeCancelModal();return;}
   const uname=S.users[b.user]?.name||b.user;
   b.status='cancelled';b.cancelledAt=new Date().toISOString();b.cancelledBy='admin';
-  await sv();closeCancelModal();
-  xm('acal-msg',`Prenotazione di ${uname} cancellata.`,'o');
-  setTimeout(()=>xm('acal-msg',''),2500);
+  await sv();closeCancelModal();renderACal();
+  xm('acal-msg',`Prenotazione di ${uname} cancellata.`,'o');setTimeout(()=>xm('acal-msg',''),2500);
 }
 
 function openAllocModal(date,hour){
@@ -848,21 +800,33 @@ function openAllocModal(date,hour){
 function closeAllocModal(){document.getElementById('alloc-modal').style.display='none';allocTarget=null;}
 async function confirmAllocModal(){
   if(!allocTarget)return;
-  const tu=document.getElementById('alloc-modal-user').value;
-  if(!tu)return;
+  const tu=document.getElementById('alloc-modal-user').value;if(!tu)return;
   const conflict=S.bookings.find(b=>b.date===allocTarget.date&&b.hour===allocTarget.hour&&b.status==='active');
   if(conflict){xm('acal-msg','Slot già occupato.');closeAllocModal();return;}
-  // Admin bypassa tutti i vincoli
-  S.bookings.push({
-    id:`adm_${Date.now()}_${Math.random().toString(36).slice(2,6)}`,
-    user:tu,date:allocTarget.date,hour:allocTarget.hour,
-    status:'active',created:new Date().toISOString(),allocatedBy:'admin'
-  });
+  S.bookings.push({id:`adm_${Date.now()}_${Math.random().toString(36).slice(2,6)}`,user:tu,date:allocTarget.date,hour:allocTarget.hour,status:'active',created:new Date().toISOString(),allocatedBy:'admin'});
+  await sv();const uname=S.users[tu]?.name||tu;
+  closeAllocModal();renderACal();
+  xm('acal-msg',`✓ Slot allocato a ${uname}.`,'o');setTimeout(()=>xm('acal-msg',''),2500);
+}
+
+// ===== RESET =====
+function openResetModal(){
+  document.getElementById('reset-confirm-input').value='';
+  xm('reset-modal-err','');
+  document.getElementById('reset-modal').style.display='flex';
+}
+function closeResetModal(){document.getElementById('reset-modal').style.display='none';}
+async function confirmReset(){
+  const val=document.getElementById('reset-confirm-input').value.trim();
+  if(val!=='RESET')return xm('reset-modal-err','Digita esattamente RESET per confermare.');
+  // Cancella prenotazioni e messaggi, mantieni utenti e vincoli
+  S.bookings=[];
+  S.messages=[];
   await sv();
-  const uname=S.users[tu]?.name||tu;
-  closeAllocModal();
-  xm('acal-msg',`✓ Slot allocato a ${uname}.`,'o');
-  setTimeout(()=>xm('acal-msg',''),2500);
+  closeResetModal();
+  xm('reset-msg','✓ Reset completato. Prenotazioni e messaggi cancellati. Utenti e vincoli invariati.','o');
+  setTimeout(()=>xm('reset-msg',''),5000);
+  renderACal();renderAStats();renderABacheca();
 }
 
 function setAP(btn){
@@ -888,10 +852,10 @@ function renderPEx(){
     ex.style.display='flex';
     ex.innerHTML=`<input type="number" min="2020" max="2099" value="${aPOpts.y||now.getFullYear()}" onchange="aPOpts.y=+this.value;renderAStats()" style="width:90px;">`;
   } else if(aPeriod==='custom'){
-    ex.style.display='flex';
-    ex.innerHTML=`<input type="date" value="${aPOpts.s||ds(now)}" onchange="aPOpts.s=this.value;renderAStats()" style="width:135px;">
+    ex.style.display='flex';const t=today();
+    ex.innerHTML=`<input type="date" value="${aPOpts.s||t}" onchange="aPOpts.s=this.value;renderAStats()" style="width:135px;">
       <span style="font-size:12px;align-self:center;">→</span>
-      <input type="date" value="${aPOpts.e||ds(now)}" onchange="aPOpts.e=this.value;renderAStats()" style="width:135px;">`;
+      <input type="date" value="${aPOpts.e||t}" onchange="aPOpts.e=this.value;renderAStats()" style="width:135px;">`;
   } else ex.style.display='none';
 }
 function getAR(){
@@ -938,9 +902,8 @@ async function sendAdmMsg(){
   const tg=opts.includes('all')?['all']:opts;
   tg.forEach(to=>S.messages.push({id:Date.now()+'_'+Math.random().toString(36).slice(2,5),from:'admin',name:'Admin',to,text,ts:new Date().toISOString(),type:'admin'}));
   await sv();document.getElementById('mtxt').value='';
-  xm('mok',`Inviato a ${opts.includes('all')?'tutti':opts.length+' utenti'}.`,'o');setTimeout(()=>xm('mok',''),2500);
+  xm('mok',`Inviato a ${opts.includes('all')?'tutti':opts.length+' utenti'}.`,'o');setTimeout(()=>xm('mok',''),2500);renderABacheca();
 }
-
 function renderABacheca(){
   const el=document.getElementById('ablist');if(!el)return;
   const msgs=[...S.messages].sort((a,b)=>b.ts.localeCompare(a.ts));
@@ -952,7 +915,7 @@ function renderABacheca(){
       <button class="btn btn-d btn-sm" onclick="delMsg('${m.id}')">🗑</button>
     </div></div>`).join('');
 }
-async function delMsg(id){S.messages=S.messages.filter(m=>m.id!==id);await sv();}
+async function delMsg(id){S.messages=S.messages.filter(m=>m.id!==id);await sv();renderABacheca();}
 
 function renderConstraints(){
   document.getElementById('c-mw').value=S.C.mw;
@@ -980,13 +943,13 @@ function sAdmTab(tab,e){
   if(tab==='aset')renderConstraints();
 }
 
-// Esponi funzioni globali per onclick inline
 window.doLogin=doLogin;window.doLogout=doLogout;window.sTab=sTab;window.sAdmTab=sAdmTab;
 window.shiftW=shiftW;window.shiftAW=shiftAW;window.confirmBook=confirmBook;window.clearSel=clearSel;
 window.cancelById=cancelById;window.postMsg=postMsg;window.adminCreateUser=adminCreateUser;
 window.openDelUserModal=openDelUserModal;window.closeDelUserModal=closeDelUserModal;window.confirmDeleteUserModal=confirmDeleteUserModal;
 window.openCancelModal=openCancelModal;window.closeCancelModal=closeCancelModal;window.confirmCancelModal=confirmCancelModal;
 window.openAllocModal=openAllocModal;window.closeAllocModal=closeAllocModal;window.confirmAllocModal=confirmAllocModal;
+window.openResetModal=openResetModal;window.closeResetModal=closeResetModal;window.confirmReset=confirmReset;
 window.setAP=setAP;window.renderAStats=renderAStats;window.renderPEx=renderPEx;
 window.sendAdmMsg=sendAdmMsg;window.delMsg=delMsg;window.saveC=saveC;
 window.aPOpts=aPOpts;
