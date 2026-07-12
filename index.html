@@ -97,7 +97,7 @@ input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E7
     <div style="font-size:14px;color:#888;">Sistema di prenotazione condominiale</div>
   </div>
   <div class="card">
-    <div class="ig"><label>Username</label><input id="lu" placeholder="es. rossi" autocomplete="username"/></div>
+    <div class="ig"><label>Cognome</label><input id="lu" placeholder="es. rossi" autocomplete="username"/></div>
     <div class="ig"><label>Password</label><input id="lp" type="password" placeholder="••••••" autocomplete="current-password"/></div>
     <div id="le"></div>
     <button class="btn btn-p" style="width:100%;justify-content:center;font-size:15px;padding:10px;" onclick="doLogin()">Accedi</button>
@@ -121,6 +121,7 @@ input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E7
     <button class="nb" onclick="sTab('storico',event)">📋 Storico</button>
     <button class="nb" onclick="sTab('stats',event)">📊 Stats</button>
     <button class="nb" onclick="sTab('bacheca',event)">💬 Bacheca<span id="udot" style="display:none;" class="udot"></span></button>
+    <button class="nb" onclick="sTab('profilo',event)">🔑 Profilo</button>
   </div>
   <div class="tc active" id="t-prenota">
     <div class="card">
@@ -160,6 +161,20 @@ input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E7
     </div>
     <div class="card"><div class="stitle">Bacheca</div><div id="blist"></div></div>
   </div>
+  <div class="tc" id="t-profilo">
+    <div class="card">
+      <div class="stitle">Il tuo account</div>
+      <div class="ig"><label>Cognome</label><input id="prof-user" disabled></div>
+      <div class="ig"><label>Password attuale</label><input id="prof-curpass" disabled></div>
+    </div>
+    <div class="card">
+      <div class="stitle">Cambia password</div>
+      <div class="ig"><label>Nuova password</label><input id="prof-new1" type="text" placeholder="Nuova password" autocomplete="new-password"/></div>
+      <div class="ig"><label>Conferma nuova password</label><input id="prof-new2" type="text" placeholder="Ripeti nuova password" autocomplete="new-password"/></div>
+      <button class="btn btn-p btn-sm" onclick="changeMyPassword()">Salva nuova password</button>
+      <div id="profmsg" style="margin-top:6px;"></div>
+    </div>
+  </div>
 </div>
 
 <div class="screen" id="s-admin">
@@ -179,16 +194,16 @@ input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E7
     <button class="nb" onclick="sAdmTab('amsg',event)">💬 Msg</button>
     <button class="nb" onclick="sAdmTab('aset',event)">⚙️ Vincoli</button>
     <button class="nb" onclick="sAdmTab('areset',event)">🔄 Reset</button>
+    <button class="nb" onclick="sAdmTab('aprofilo',event)">🔑 Profilo</button>
   </div>
 
   <div class="tc active" id="t-ausers">
     <div class="card">
       <div class="stitle">Registra nuovo utente</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-        <div class="ig" style="margin-bottom:0;"><label>Username</label><input id="new-un" placeholder="es. rossi" autocomplete="off"/></div>
+        <div class="ig" style="margin-bottom:0;"><label>Cognome</label><input id="new-un" placeholder="es. Rossi" autocomplete="off"/></div>
         <div class="ig" style="margin-bottom:0;"><label>Password</label><input id="new-up" type="text" placeholder="Password" autocomplete="off"/></div>
       </div>
-      <div class="ig"><label>Nome visualizzato</label><input id="new-ud" placeholder="es. Marco Rossi"/></div>
       <button class="btn btn-p btn-sm" onclick="adminCreateUser()">+ Crea utente</button>
       <div id="num" style="margin-top:6px;"></div>
     </div>
@@ -288,6 +303,21 @@ input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E7
       <div id="reset-msg" style="margin-top:8px;"></div>
     </div>
   </div>
+
+  <div class="tc" id="t-aprofilo">
+    <div class="card">
+      <div class="stitle">Il tuo account admin</div>
+      <div class="ig"><label>Cognome</label><input id="ap-user" disabled></div>
+      <div class="ig"><label>Password attuale</label><input id="ap-curpass" disabled></div>
+    </div>
+    <div class="card">
+      <div class="stitle">Cambia password</div>
+      <div class="ig"><label>Nuova password</label><input id="ap-new1" type="text" placeholder="Nuova password" autocomplete="new-password"/></div>
+      <div class="ig"><label>Conferma nuova password</label><input id="ap-new2" type="text" placeholder="Ripeti nuova password" autocomplete="new-password"/></div>
+      <button class="btn btn-p btn-sm" onclick="changeAdminPassword()">Salva nuova password</button>
+      <div id="apmsg" style="margin-top:6px;"></div>
+    </div>
+  </div>
 </div>
 </div>
 
@@ -383,9 +413,12 @@ async function load(){
       S.users=d.users||{};S.bookings=d.bookings||[];S.messages=d.messages||[];
       S.C=Object.assign({mw:4,mc:2,ma:2,sp:'ytd+30d'},d.C||{});
     }
-    if(!S.users.admin){S.users.admin={pass:'admin123',role:'admin',status:'approved',name:'Admin'};await sv();}
+    let changed=false;
+    if(S.users.admin&&!S.users.adminalberti){S.users.adminalberti=Object.assign({},S.users.admin,{pass:'Admin',name:'AdminAlberti'});delete S.users.admin;changed=true;}
+    if(!S.users.adminalberti){S.users.adminalberti={pass:'Admin',role:'admin',status:'approved',name:'AdminAlberti'};changed=true;}
+    if(changed)await sv();
   }catch(e){
-    if(!S.users.admin)S.users.admin={pass:'admin123',role:'admin',status:'approved',name:'Admin'};
+    if(!S.users.adminalberti)S.users.adminalberti={pass:'Admin',role:'admin',status:'approved',name:'AdminAlberti'};
   }
 }
 
@@ -444,7 +477,24 @@ function renderApp(){
   if(!S.cu||!S.users[S.cu])return;
   document.getElementById('wname').textContent=S.users[S.cu].name;
   document.getElementById('rule-hint').textContent=`Max ${S.C.mw} ore/sett. · Max ${S.C.mc} consecutive · Anticipo max ${S.C.ma} sett.`;
-  renderWG();renderMyB();renderHist();renderUS();renderBacheca();checkUnread();
+  renderWG();renderMyB();renderHist();renderUS();renderBacheca();checkUnread();renderProfilo();
+}
+
+function renderProfilo(){
+  const el=document.getElementById('prof-user');if(!el||!S.cu||!S.users[S.cu])return;
+  el.value=S.cu;
+  document.getElementById('prof-curpass').value=S.users[S.cu].pass||'';
+}
+async function changeMyPassword(){
+  const p1=document.getElementById('prof-new1').value.trim();
+  const p2=document.getElementById('prof-new2').value.trim();
+  if(!p1)return xm('profmsg','Inserisci una nuova password.');
+  if(p1!==p2)return xm('profmsg','Le due password non coincidono.');
+  S.users[S.cu].pass=p1;
+  await sv();
+  document.getElementById('prof-new1').value='';document.getElementById('prof-new2').value='';
+  renderProfilo();
+  xm('profmsg','Password aggiornata!','o');setTimeout(()=>xm('profmsg',''),2500);
 }
 
 function shiftW(d){
@@ -668,10 +718,28 @@ function sTab(tab,e){
   if(tab==='mie')renderMyB();if(tab==='storico')renderHist();
   if(tab==='stats')renderUS();if(tab==='prenota')renderWG();
   if(tab==='bacheca'){renderBacheca();if(S.users[S.cu]){S.users[S.cu].lastRead=new Date().toISOString();sv();}checkUnread();}
+  if(tab==='profilo')renderProfilo();
 }
 
 // ADMIN
-function renderAdmin(){fillSels();renderAUsers();renderACal();renderAStats();renderABacheca();renderConstraints();}
+function renderAdmin(){fillSels();renderAUsers();renderACal();renderAStats();renderABacheca();renderConstraints();renderAProfilo();}
+
+function renderAProfilo(){
+  const el=document.getElementById('ap-user');if(!el||!S.cu||!S.users[S.cu])return;
+  el.value=S.cu;
+  document.getElementById('ap-curpass').value=S.users[S.cu].pass||'';
+}
+async function changeAdminPassword(){
+  const p1=document.getElementById('ap-new1').value.trim();
+  const p2=document.getElementById('ap-new2').value.trim();
+  if(!p1)return xm('apmsg','Inserisci una nuova password.');
+  if(p1!==p2)return xm('apmsg','Le due password non coincidono.');
+  S.users[S.cu].pass=p1;
+  await sv();
+  document.getElementById('ap-new1').value='';document.getElementById('ap-new2').value='';
+  renderAProfilo();
+  xm('apmsg','Password aggiornata!','o');setTimeout(()=>xm('apmsg',''),2500);
+}
 
 function fillSels(){
   const appr=Object.entries(S.users).filter(([k,v])=>v.role!=='admin'&&v.status==='approved');
@@ -684,13 +752,13 @@ function fillSels(){
 async function adminCreateUser(){
   const un=document.getElementById('new-un').value.trim().toLowerCase();
   const up=document.getElementById('new-up').value.trim();
-  const ud=document.getElementById('new-ud').value.trim();
-  if(!un||!up)return xm('num','Username e password obbligatori.');
-  if(S.users[un])return xm('num','Username già esistente.');
-  S.users[un]={pass:up,role:'user',status:'approved',name:ud||un,lastRead:''};
+  if(!un||!up)return xm('num','Cognome e password obbligatori.');
+  if(S.users[un])return xm('num','Cognome già esistente.');
+  const dn=un.charAt(0).toUpperCase()+un.slice(1);
+  S.users[un]={pass:up,role:'user',status:'approved',name:dn,lastRead:''};
   await sv();
-  document.getElementById('new-un').value='';document.getElementById('new-up').value='';document.getElementById('new-ud').value='';
-  xm('num',`Utente <strong>${ud||un}</strong> creato. Login: <strong>${un}</strong> / <strong>${up}</strong>`,'o');
+  document.getElementById('new-un').value='';document.getElementById('new-up').value='';
+  xm('num',`Utente <strong>${dn}</strong> creato. Login: <strong>${un}</strong> / <strong>${up}</strong>`,'o');
   renderAUsers();fillSels();
 }
 
@@ -941,6 +1009,7 @@ function sAdmTab(tab,e){
   if(tab==='ausers')renderAUsers();
   if(tab==='amsg'){fillSels();renderABacheca();}
   if(tab==='aset')renderConstraints();
+  if(tab==='aprofilo')renderAProfilo();
 }
 
 window.doLogin=doLogin;window.doLogout=doLogout;window.sTab=sTab;window.sAdmTab=sAdmTab;
@@ -953,6 +1022,7 @@ window.openResetModal=openResetModal;window.closeResetModal=closeResetModal;wind
 window.setAP=setAP;window.renderAStats=renderAStats;window.renderPEx=renderPEx;
 window.sendAdmMsg=sendAdmMsg;window.delMsg=delMsg;window.saveC=saveC;
 window.aPOpts=aPOpts;
+window.changeMyPassword=changeMyPassword;window.changeAdminPassword=changeAdminPassword;
 
 await load();
 </script>
