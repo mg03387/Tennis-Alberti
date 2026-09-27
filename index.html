@@ -54,6 +54,8 @@ input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px #1D9E7
 .wghr{font-size:9px;color:#aaa;text-align:right;padding-right:5px;display:flex;align-items:center;justify-content:flex-end;border-right:.5px solid #e0ddd4;}
 .wgc{border-bottom:.5px solid #e0ddd4;border-left:.5px solid #e0ddd4;min-height:26px;cursor:pointer;transition:background .1s;position:relative;-webkit-tap-highlight-color:rgba(29,158,117,.15);}
 .wgc.past{opacity:.4;cursor:default;pointer-events:none;}
+.wgc.apast{opacity:.55;}
+.wgc.apast::after{content:'';position:absolute;inset:0;border-top:1px dashed #b8b3a5;pointer-events:none;}
 .wgc.occ{background:#F0997B;}
 .wgc.mine{background:#9FE1CB;}
 .wgc.sel{background:#1D9E75;}
@@ -448,6 +450,7 @@ function fL(s){const[y,m,g]=s.split('-');return`${g}/${m}/${y}`;}
 function fDT(iso){const d=new Date(iso);return`${pad(d.getDate())}/${pad(d.getMonth()+1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;}
 function pad(n){return String(n).padStart(2,'0');}
 function today(){return ds(new Date());}
+function isPast(date,hour){const t=today();return date<t||(date===t&&hour<=new Date().getHours());}
 
 function weekStart(dStr){const d=new Date(dStr),dow=d.getDay(),diff=dow===0?-6:1-dow;d.setDate(d.getDate()+diff);return ds(d);}
 function weekEnd(ws){const d=new Date(ws);d.setDate(d.getDate()+6);return ds(d);}
@@ -535,13 +538,16 @@ function renderWG(){
     days.forEach(d=>{
       const dStr=ds(d),it=dStr===ts;
       const cell=document.createElement('div');
-      const past=dStr<ts||(dStr===ts&&hr<=now.getHours());
+      const past=isPast(dStr,hr);
       const future=d>max;
       const bk=S.bookings.find(b=>b.date===dStr&&b.hour===hr&&b.status==='active');
       const mine=bk&&bk.user===S.cu;
       const ssel=sel.some(c=>c.date===dStr&&c.hour===hr);
       cell.className='wgc'+(it?' tdc':'');
-      if(past)cell.className+=' past';
+      if(past){
+        cell.className+=' past';
+        if(bk){const l=document.createElement('div');l.className='cl o';l.textContent=S.users[bk.user]?.name||bk.user;cell.appendChild(l);}
+      }
       else if(future)cell.className+=' fl';
       else if(ssel){
         cell.className+=' sel';
@@ -619,12 +625,15 @@ async function confirmBook(){
 }
 
 async function cancelSlot(date,hour){
+  if(isPast(date,hour))return;
   const b=S.bookings.find(b=>b.date===date&&b.hour===hour&&b.user===S.cu&&b.status==='active');
   if(!b)return;b.status='cancelled';b.cancelledAt=new Date().toISOString();await sv();
 }
 async function cancelById(id){
-  const b=S.bookings.find(b=>b.id===id);
-  if(b){b.status='cancelled';b.cancelledAt=new Date().toISOString();}await sv();
+  const b=S.bookings.find(b=>b.id===id&&b.user===S.cu&&b.status==='active');
+  if(!b)return;
+  if(isPast(b.date,b.hour))return;
+  b.status='cancelled';b.cancelledAt=new Date().toISOString();await sv();
 }
 
 function renderMyB(){
@@ -635,9 +644,9 @@ function renderMyB(){
   let html='';
   Object.entries(byWeek).sort(([a],[b])=>a.localeCompare(b)).forEach(([ws,bks])=>{
     html+=`<div style="font-size:11px;font-weight:600;color:#666;text-transform:uppercase;padding:6px 0 3px;">Settimana ${fL(ws)} — ${bks.length}/${S.C.mw} ore</div>`;
-    html+=bks.map(b=>`<div class="row"><div><div style="font-weight:500;">${fL(b.date)}</div><div style="font-size:11px;color:#888;">${b.hour}:00–${b.hour+1}:00</div></div>
-      <div style="display:flex;align-items:center;gap:6px;"><span class="badge ${b.date<today()?'bk':'bg'}">${b.date<today()?'Passata':'Attiva'}</span>
-      <button class="btn btn-d btn-sm" onclick="cancelById('${b.id}')">✕ Disdici</button></div></div>`).join('');
+    html+=bks.map(b=>{const isP=isPast(b.date,b.hour);return`<div class="row"><div><div style="font-weight:500;">${fL(b.date)}</div><div style="font-size:11px;color:#888;">${b.hour}:00–${b.hour+1}:00</div></div>
+      <div style="display:flex;align-items:center;gap:6px;"><span class="badge ${isP?'bk':'bg'}">${isP?'Passata':'Attiva'}</span>
+      ${isP?'':`<button class="btn btn-d btn-sm" onclick="cancelById('${b.id}')">✕ Disdici</button>`}</div></div>`;}).join('');
   });
   el.innerHTML=html;
 }
@@ -646,8 +655,14 @@ function renderHist(){
   const el=document.getElementById('histlist');
   const all=S.bookings.filter(b=>b.user===S.cu).sort((a,b)=>b.date.localeCompare(a.date)||b.hour-a.hour);
   if(!all.length){el.innerHTML='<div class="empty">Nessuna prenotazione nello storico.</div>';return;}
-  el.innerHTML=all.map(b=>`<div class="row"><div><div>${fL(b.date)}</div><div style="font-size:11px;color:#888;">${b.hour}:00–${b.hour+1}:00</div></div>
-    <span class="badge ${b.status==='active'?'bg':b.status==='cancelled'?'br':'bk'}">${b.status==='active'?'Attiva':b.status==='cancelled'?'Cancellata':'Passata'}</span></div>`).join('');
+  el.innerHTML=all.map(b=>{
+    const cancelled=b.status==='cancelled';
+    const past=!cancelled&&isPast(b.date,b.hour);
+    const label=cancelled?'Cancellata':past?'Passata':'Attiva';
+    const cls=cancelled?'br':past?'bk':'bg';
+    return`<div class="row"><div><div>${fL(b.date)}</div><div style="font-size:11px;color:#888;">${b.hour}:00–${b.hour+1}:00</div></div>
+    <span class="badge ${cls}">${label}</span></div>`;
+  }).join('');
 }
 
 function gSR(type){
@@ -742,7 +757,7 @@ async function changeAdminPassword(){
 }
 
 function fillSels(){
-  const appr=Object.entries(S.users).filter(([k,v])=>v.role!=='admin'&&v.status==='approved');
+  const appr=Object.entries(S.users).filter(([k,v])=>v.role!=='admin'&&v.status==='approved').sort(([a],[b])=>a.localeCompare(b));
   const au=document.getElementById('astat-user');
   if(au){const cv=au.value;au.innerHTML='<option value="all">Tutti</option>'+appr.map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');if(cv)au.value=cv;}
   const mt=document.getElementById('msg-to');
@@ -764,7 +779,7 @@ async function adminCreateUser(){
 
 function renderAUsers(){
   const el=document.getElementById('ulist');
-  const u=Object.entries(S.users).filter(([k,v])=>v.role!=='admin');
+  const u=Object.entries(S.users).filter(([k,v])=>v.role!=='admin').sort(([a],[b])=>a.localeCompare(b));
   if(!u.length){el.innerHTML='<div class="empty">Nessun utente.</div>';return;}
   el.innerHTML='';
   u.forEach(([k,v])=>{
@@ -802,7 +817,7 @@ async function confirmDeleteUserModal(){
 
 function shiftAW(d){awOff+=d;renderACal();}
 function renderACal(){
-  const days=getWeek(awOff),ts=today(),now=new Date();
+  const days=getWeek(awOff),ts=today();
   const d1=days[0],d2=days[6];
   document.getElementById('awlabel').textContent=`${d1.getDate()} ${d1.toLocaleString('it',{month:'short'})} – ${d2.getDate()} ${d2.toLocaleString('it',{month:'short',year:'2-digit'})}`;
   const g=document.getElementById('awgrid');g.innerHTML='';
@@ -817,19 +832,18 @@ function renderACal(){
     const hd=document.createElement('div');hd.className='wghr';hd.textContent=hr;g.appendChild(hd);
     days.forEach(d=>{
       const dStr=ds(d),it=dStr===ts;
-      const past=dStr<ts||(dStr===ts&&hr<=now.getHours());
+      const past=isPast(dStr,hr);
       const bk=S.bookings.find(b=>b.date===dStr&&b.hour===hr&&b.status==='active');
       const cell=document.createElement('div');
-      cell.className='wgc'+(it?' tdc':'');
-      if(past){cell.className+=' past';g.appendChild(cell);return;}
+      cell.className='wgc'+(it?' tdc':'')+(past?' apast':'');
       if(bk){
         cell.className+=' occ';
         const uname=S.users[bk.user]?.name||bk.user;
         const lbl=document.createElement('div');lbl.className='cl o';lbl.style.fontSize='7px';lbl.textContent=uname;cell.appendChild(lbl);
-        cell.title=`${uname} — clicca per cancellare`;
+        cell.title=`${uname}${past?' (passata)':''} — clicca per cancellare`;
         const bid=bk.id;cell.addEventListener('click',()=>openCancelModal(bid));
       } else {
-        cell.className+=' afree';cell.title='Libero — clicca per allocare';
+        cell.className+=' afree';cell.title=`Libero${past?' (passato)':''} — clicca per allocare`;
         const dc=dStr,hc=hr;cell.addEventListener('click',()=>openAllocModal(dc,hc));
       }
       g.appendChild(cell);
@@ -842,7 +856,8 @@ function openCancelModal(bid){
   if(!b){xm('acal-msg','Prenotazione non trovata.');return;}
   cancelTarget=bid;
   const uname=S.users[b.user]?.name||b.user;
-  document.getElementById('cancel-modal-sub').textContent=`${uname} — ${fL(b.date)} · ${b.hour}:00–${b.hour+1}:00. Forzare la cancellazione?`;
+  const wasPast=isPast(b.date,b.hour);
+  document.getElementById('cancel-modal-sub').textContent=`${uname} — ${fL(b.date)} · ${b.hour}:00–${b.hour+1}:00${wasPast?' (data passata)':''}. Forzare la cancellazione?`;
   document.getElementById('cancel-modal').style.display='flex';
 }
 function closeCancelModal(){document.getElementById('cancel-modal').style.display='none';cancelTarget=null;}
@@ -857,10 +872,11 @@ async function confirmCancelModal(){
 }
 
 function openAllocModal(date,hour){
-  const appr=Object.entries(S.users).filter(([k,v])=>v.role!=='admin'&&v.status==='approved');
+  const appr=Object.entries(S.users).filter(([k,v])=>v.role!=='admin'&&v.status==='approved').sort(([a],[b])=>a.localeCompare(b));
   if(!appr.length){xm('acal-msg','Nessun utente approvato.');return;}
   allocTarget={date,hour};
-  document.getElementById('alloc-modal-sub').textContent=`${fL(date)} · ${hour}:00–${hour+1}:00`;
+  const wasPast=isPast(date,hour);
+  document.getElementById('alloc-modal-sub').textContent=`${fL(date)} · ${hour}:00–${hour+1}:00${wasPast?' (data passata)':''}`;
   const sel=document.getElementById('alloc-modal-user');
   sel.innerHTML=appr.map(([k,v])=>`<option value="${k}">${v.name} (@${k})</option>`).join('');
   document.getElementById('alloc-modal').style.display='flex';
@@ -947,7 +963,7 @@ function renderAStats(){
   const ca=S.bookings.filter(b=>b.status==='cancelled'&&b.date>=s&&b.date<=e&&(uf==='all'||b.user===uf)).length;
   const hC={};HRS.forEach(h=>hC[h]=0);bks.forEach(b=>hC[b.hour]++);
   const mH=Math.max(...Object.values(hC),1);
-  const ub=uf==='all'?Object.entries(S.users).filter(([k,v])=>v.role!=='admin').map(([k,v])=>{
+  const ub=uf==='all'?Object.entries(S.users).filter(([k,v])=>v.role!=='admin').sort(([a],[b])=>a.localeCompare(b)).map(([k,v])=>{
     const n=bks.filter(b=>b.user===k).length;return n?`<div class="row" style="padding:6px 0;"><div>${v.name}</div><span class="badge bg">${n} h</span></div>`:''}).join(''):'';
   el.innerHTML=`<div style="font-size:11px;color:#aaa;margin-bottom:8px;">Dal ${fL(s)} al ${fL(e)}</div>
   <div class="sgrid">
