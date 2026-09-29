@@ -445,7 +445,7 @@ if('serviceWorker' in navigator){
 
 function showS(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('s-'+id).classList.add('active');}
 function xm(id,t,tp='e'){const el=document.getElementById(id);if(el)el.innerHTML=t?`<div class="${tp==='o'?'obox':'ebox'}">${t}</div>`:'';}
-function ds(d){return d.toISOString().split('T')[0];}
+function ds(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function fL(s){const[y,m,g]=s.split('-');return`${g}/${m}/${y}`;}
 function fDT(iso){const d=new Date(iso);return`${pad(d.getDate())}/${pad(d.getMonth()+1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;}
 function pad(n){return String(n).padStart(2,'0');}
